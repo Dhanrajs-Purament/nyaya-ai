@@ -93,6 +93,23 @@
             android:exported="false"
             android:theme="@style/Theme.BitchatAndroid"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Nyaya AI Lawyer — offline-first legal help. Shown as a second launcher
+             entry so users can open the AI lawyer directly, while the full bitchat
+             mesh experience stays untouched. -->
+        <activity
+            android:name=".nyaya.NyayaActivity"
+            android:exported="true"
+            android:label="Nyaya AI Lawyer"
+            android:theme="@style/Theme.BitchatAndroid"
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -130,6 +130,10 @@ dependencies {
     // WebSocket
     implementation(libs.okhttp)
 
+    // Nyaya AI Lawyer — on-device LLM inference (Gemma .task/.litertlm bundles)
+    // via Google MediaPipe LLM Inference API (runs fully offline on the phone)
+    implementation("com.google.mediapipe:tasks-genai:0.10.24")
+
     // Arti (Tor in Rust) Android bridge - custom build from latest source
     // Built with rustls, 16KB page size support, and onio//un service client
     // Native libraries are in src/tor/jniLibs/ (extracted from arti-custom.aar)
