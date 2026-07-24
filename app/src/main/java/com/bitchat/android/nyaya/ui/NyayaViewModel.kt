@@ -7,6 +7,7 @@ import com.bitchat.android.nyaya.ai.AiRouter
 import com.bitchat.android.nyaya.ai.ChatTurn
 import com.bitchat.android.nyaya.ai.CloudLlmEngine
 import com.bitchat.android.nyaya.ai.LawyerSystemPrompt
+import com.bitchat.android.nyaya.ai.LegalKnowledgeBase
 import com.bitchat.android.nyaya.ai.ModelDownloadManager
 import com.bitchat.android.nyaya.ai.OnDeviceLlmEngine
 import com.bitchat.android.nyaya.memory.ConversationMemory
@@ -18,8 +19,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * State holder for the Nyaya AI lawyer. Owns the engines, memory, voice and
- * settings; exposes a single immutable UiState to the Compose UI.
+ * State holder for the Nyaya AI lawyer. Owns the engines, memory, voice,
+ * settings and the pre-warmed legal knowledge base; exposes a single
+ * immutable UiState to the Compose UI.
  */
 class NyayaViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -28,6 +30,13 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
     private val onDevice = OnDeviceLlmEngine(application)
     private val cloud = CloudLlmEngine(settings)
     private val router = AiRouter(settings, onDevice, cloud)
+
+    /**
+     * Offline legal knowledge base. Warmed up in the background the moment
+     * the app opens, so the very first question is answered with real
+     * bare-act text already indexed in memory.
+     */
+    private val knowledgeBase = LegalKnowledgeBase(application)
 
     private val memory = ConversationMemory { prompt ->
         val engine = router.active() ?: throw IllegalStateException("No AI engine ready")
@@ -49,6 +58,7 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
         val downloadProgress: Float? = null,
         val engineLabel: String = "",
         val listening: Boolean = false,
+        val kbReady: Boolean = false,
         val error: String? = null
     )
 
@@ -58,6 +68,11 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
     init {
         voice.init()
         refreshEngineState()
+        // Pre-warm the legal knowledge base off the main thread.
+        viewModelScope.launch {
+            knowledgeBase.warmUp()
+            _state.update { it.copy(kbReady = knowledgeBase.isWarm) }
+        }
         if (downloadManager.isDownloaded(settings.modelFileName)) {
             loadModel()
         }
@@ -126,7 +141,18 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
         }
         viewModelScope.launch {
             try {
-                val reply = engine.generate(LawyerSystemPrompt.PROMPT, memory.contextForModel())
+                // Offline RAG: ground the answer in real bare-act text.
+                val references = knowledgeBase.retrieve(trimmed)
+                val systemPrompt = if (references.isEmpty()) {
+                    LawyerSystemPrompt.PROMPT
+                } else {
+                    LawyerSystemPrompt.PROMPT +
+                        "\n\nVERIFIED REFERENCE EXTRACTS from official Indian law " +
+                        "(base your answer on these; cite section numbers only from " +
+                        "these extracts; never invent citations):\n" +
+                        knowledgeBase.asReferenceBlock(references)
+                }
+                val reply = engine.generate(systemPrompt, memory.contextForModel())
                 memory.add(ChatTurn(ChatTurn.Role.ASSISTANT, reply))
                 _state.update {
                     it.copy(
