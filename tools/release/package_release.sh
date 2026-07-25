@@ -68,4 +68,10 @@ done
 echo
 echo "packaged into $OUT_DIR"
 echo "checksums written to $OUT_DIR/SHA256SUMS.txt"
+echo
+echo "REMINDER: the download buttons in README.md point at a pinned release tag,"
+echo "because the file names contain the version. After publishing this release,"
+echo "update the v… tag and the ${BASE} file names in README.md so the buttons"
+echo "keep working:"
+echo "    grep -n 'releases/download' README.md"
 exit $missing

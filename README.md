@@ -21,6 +21,60 @@ Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline 
 
 ---
 
+<div align="center">
+
+## Download
+
+### Just click and install — no account, no sign-up, free
+
+[![Download for most phones](https://img.shields.io/badge/⬇_DOWNLOAD_NOW-Most_phones_·_39_MB-2ea44f?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-1-RECOMMENDED-most-phones.apk)
+
+**↑ Start here.** Works on every Android phone sold in roughly the last eight years.
+
+[![Backup download](https://img.shields.io/badge/⬇_Backup_download-Works_on_all_phones_·_93_MB-1f6feb?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-2-BACKUP-works-on-all-phones.apk)
+
+**↑ Only if the green one refuses to install.** Same app, contains every CPU type, so it is bigger.
+
+<sub>Version 1.8.0 · Android 8.0+ · Free forever, no ads, no tracking</sub>
+
+</div>
+
+<details>
+<summary><b>Other downloads</b> — old 32-bit phones, emulators, ChromeOS, and checksums</summary>
+
+<br>
+
+| Download | Who it is for | Size |
+|---|---|---|
+| [Old 32-bit phones](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-3-old-32-bit-phones.apk) | Very old budget phones. Mesh chat works, but **the offline AI cannot run on 32-bit devices**. | 16 MB |
+| [Emulator / ChromeOS 64-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-4-emulator-and-ChromeOS-64-bit.apk) | Developers, and some ChromeOS devices. | 44 MB |
+| [Emulator 32-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-5-emulator-32-bit.apk) | Developers only. | 21 MB |
+| [SHA256SUMS.txt](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/SHA256SUMS.txt) | Checksums, to verify your download is genuine. | — |
+
+All five APKs are the **same app**. They differ only in which CPU type they carry.
+
+Verify a download:
+
+```bash
+sha256sum -c SHA256SUMS.txt --ignore-missing
+```
+
+Or browse [**all releases**](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/latest).
+
+</details>
+
+### After you download
+
+1. **Tap the downloaded file.**
+2. Android will ask permission to **"install from unknown sources"** — allow it. This app is not on the Play Store, so Android asks by default.
+3. Open **Nyaya AI**.
+4. **Settings → pick a model → Download & load model.** Use Wi-Fi; this is a large one-time download. **No account and no token needed.**
+5. Ask your question — in English, Hindi, Hinglish or your own language.
+
+**Do not want a 2.4 GB download?** Skip step 4 and paste your own API key in Settings instead. Or use the encrypted mesh chat, which needs no model at all.
+
+---
+
 ## What this is
 
 Nyaya AI answers legal questions for people in India who cannot afford a lawyer — students, workers, tenants, anyone. It does two things ordinary apps cannot:
@@ -267,27 +321,19 @@ It is also **free software** under the GNU General Public License v3.0 or later:
 
 ## Install
 
-Go to [**Releases**](https://github.com/Dhanrajs-Purament/nyaya-ai/releases) and download the file marked **RECOMMENDED**. If you are unsure, that is the one.
+**[⬇ Jump to the download buttons at the top of this page.](#download)**
+
+Quick reference:
 
 | File | Who it is for | Size |
 |---|---|---|
 | `…-1-RECOMMENDED-most-phones.apk` | **Start here.** Every Android phone sold in roughly the last eight years. | 39 MB |
-| `…-2-BACKUP-works-on-all-phones.apk` | Only if the recommended file refuses to install. Same app, contains every CPU type, so it is larger. | 93 MB |
-| `…-3-old-32-bit-phones.apk` | Very old budget phones. Mesh chat works; **offline AI does not run on 32-bit devices.** | 16 MB |
+| `…-2-BACKUP-works-on-all-phones.apk` | Only if the recommended file refuses to install. | 93 MB |
+| `…-3-old-32-bit-phones.apk` | Very old budget phones. Mesh chat works; offline AI does not run on 32-bit. | 16 MB |
 | `…-4-emulator-and-ChromeOS-64-bit.apk` | Developers, and some ChromeOS devices. | 44 MB |
 | `…-5-emulator-32-bit.apk` | Developers only. | 21 MB |
 
-All of them are the same app — they differ only in which CPU type they carry.
-
-Then: tap the downloaded file → allow **"install from unknown sources"** when Android asks (this app is not on Play Store) → open **Nyaya AI** → **Settings** → pick a model → **Download & load model** over Wi-Fi → ask your question.
-
-Prefer not to download 2.4 GB? Skip the model and paste your own API key in Settings instead.
-
-Verify a download against `SHA256SUMS.txt` on the release page:
-
-```bash
-sha256sum -c SHA256SUMS.txt --ignore-missing
-```
+Minimum Android 8.0 (API 26). The offline AI additionally needs a 64-bit phone with 4 GB+ RAM.
 
 ---
 
