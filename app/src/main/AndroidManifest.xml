@@ -110,6 +110,11 @@
             </intent-filter>
         </activity>
 
+        <!-- bitchat's mesh messenger. Deliberately NOT a launcher entry: the app
+             ships as a single icon (NyayaActivity above) and the messenger is
+             opened from the Nyaya home screen, so both features live in one app
+             instead of appearing as two separate icons. The VIEW filter is kept
+             so bitchat:// verification links still resolve here. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -117,10 +122,6 @@
             android:theme="@style/Theme.BitchatAndroid"
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

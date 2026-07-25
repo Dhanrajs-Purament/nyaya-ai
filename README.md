@@ -22,6 +22,12 @@ Nyaya AI Lawyer answers legal questions for people in India who cannot afford a 
 
 It is built on top of [bitchat](https://github.com/permissionlesstech/bitchat-android), so it also carries bitchat's encrypted Bluetooth-mesh messaging: phones talk to each other directly, with no cell tower and no internet, using the Noise protocol.
 
+### One app, two halves
+
+Both features ship in a single APK behind a **single launcher icon**. Open **Nyaya AI Lawyer** and the home screen has an **"Encrypted mesh chat"** card that opens the full bitchat messenger; Back returns you to the AI lawyer.
+
+The messenger keeps its own activity rather than being redrawn as a screen inside the AI lawyer. That is deliberate: bitchat's `MainActivity` owns the mesh service lifecycle, the Bluetooth onboarding and permission flow, its own back-press handling and several broadcast receivers. Re-hosting its UI elsewhere would mean duplicating all of that, and **every bitchat source file in this repository is byte-identical to upstream**, which keeps future merges from upstream clean. Nyaya also listens for bitchat's force-finish broadcast, so quitting or panic-wiping closes the whole app rather than leaving the AI screen open behind it.
+
 > **This app gives legal information, not legal advice.** It is not a lawyer and does not create a lawyer–client relationship. For anything serious — arrest, court dates, a live FIR — get a real advocate. Free legal aid is a right in India: call **NALSA on 15100**. In an emergency call **112**.
 
 ---
@@ -241,7 +247,6 @@ Known limitations:
 - A tenancy question about a "security deposit" retrieves company law, because "securities" and "deposits" are strong company-law terms. Pinned by a test so it stays visible; needs phrase-level matching to fix.
 - The Income-tax Act 2025 is not published on `indiacode.nic.in` or any reachable `.gov.in` host, so it comes from PRS Legislative Research's copy of the text as passed by Lok Sabha. The file says so.
 - 2.4 GB is a heavy download for the users this is aimed at. There is no smaller Gemma 4.
-- The app installs two launcher entries, "Nyaya AI Lawyer" and "bitchat".
 
 ---
 

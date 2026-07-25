@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -28,7 +30,8 @@ fun NyayaHomeScreen(
     onVoiceMode: () -> Unit,
     onOpenSettings: () -> Unit,
     onDownloadModel: () -> Unit,
-    onOpenChat: () -> Unit
+    onOpenChat: () -> Unit,
+    onOpenMeshChat: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
@@ -75,6 +78,10 @@ fun NyayaHomeScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     ModelSetupCard(state = state, onDownloadModel = onDownloadModel)
                 }
+
+                Spacer(modifier = Modifier.height(20.dp))
+                MeshChatCard(onOpenMeshChat = onOpenMeshChat)
+
                 state.error?.let { err ->
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -96,9 +103,54 @@ fun NyayaHomeScreen(
     }
 }
 
+/**
+ * Entry point into bitchat's encrypted mesh messenger, which ships inside this
+ * same app. Starting [com.bitchat.android.MainActivity] keeps the messenger's own
+ * lifecycle intact; the system Back gesture returns here.
+ */
 @Composable
-private fun NyayaSuggestion(text: String, onSend: (String) -> Unit) {
-    Box(
+private fun MeshChatCard(onOpenMeshChat: () -> Unit) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onOpenMeshChat() },
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Hub,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Encrypted mesh chat",
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Message people nearby over Bluetooth \u2014 no internet, " +
+                        "no SIM, end-to-end encrypted.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun NyayaSuggestion(text: String, onSend: (String) -> Unit) {    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
