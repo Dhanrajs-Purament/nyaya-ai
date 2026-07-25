@@ -8,14 +8,14 @@
 
 *न्याय — justice*
 
-Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline · encrypted Bluetooth mesh messaging
+Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline · encrypted Bluetooth mesh messaging · files up to 256 MB over an encrypted Wi-Fi fast lane
 
 [![Licence: GPL v3](https://img.shields.io/badge/Licence-GPL%20v3-blue.svg)](LICENSE.md)
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3ddc84.svg)](#download)
 [![Price](https://img.shields.io/badge/Price-Free%20forever-brightgreen.svg)](#free-forever)
 [![Privacy](https://img.shields.io/badge/Data%20collected-None-brightgreen.svg)](PRIVACY_POLICY.md)
 
-[What it does](#what-this-is) · [AI features](#the-ai-legal-assistant) · [Mesh chat features](#encrypted-mesh-chat) · [Legal library](#the-offline-legal-library) · [Privacy](PRIVACY_POLICY.md) · [Terms](TERMS_OF_USE.md) · [Licences](THIRD_PARTY_LICENSES.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[What it does](#what-this-is) · [What you get](#what-you-get-at-a-glance) · [AI features](#the-ai-legal-assistant) · [Mesh chat features](#encrypted-mesh-chat) · [Legal library](#the-offline-legal-library) · [Privacy](PRIVACY_POLICY.md) · [Terms](TERMS_OF_USE.md) · [Licences](THIRD_PARTY_LICENSES.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 **[⬇ Download the app](#download)**
 
@@ -41,9 +41,64 @@ Both features ship in a single APK behind a **single launcher icon**. Open **Nya
 - **[The AI legal assistant](#the-ai-legal-assistant)** — offline answers grounded in 25 Indian Acts.
 - **[Encrypted mesh chat](#encrypted-mesh-chat)** — the complete bitchat messenger, every feature included, nothing removed.
 
-The messenger keeps its own activity rather than being redrawn as a screen inside the AI lawyer. That is deliberate: bitchat's `MainActivity` owns the mesh service lifecycle, the Bluetooth onboarding and permission flow, its own back-press handling and several broadcast receivers. Re-hosting its UI elsewhere would mean duplicating all of that, and **every bitchat source file in this repository is byte-identical to upstream**, which keeps future merges from upstream clean. Nyaya also listens for bitchat's force-finish broadcast, so quitting or panic-wiping closes the whole app rather than leaving the AI screen open behind it.
+The messenger keeps its own activity rather than being redrawn as a screen inside the AI lawyer. That is deliberate: bitchat's `MainActivity` owns the mesh service lifecycle, the Bluetooth onboarding and permission flow, its own back-press handling and several broadcast receivers. Re-hosting its UI elsewhere would mean duplicating all of that, and the bitchat sources in this repository stay as close to upstream as possible — only a small, documented set of files was carefully **extended, never trimmed**, to make file sending more honest and more capable (see [the file fast lane](#sending-big-files-the-wi-fi-fast-lane)) — which keeps future merges from upstream clean. Nyaya also listens for bitchat's force-finish broadcast, so quitting or panic-wiping closes the whole app rather than leaving the AI screen open behind it.
 
 > **This app gives legal information, not legal advice.** It is not a lawyer and does not create a lawyer–client relationship. For anything serious — arrest, court dates, a live FIR — get a real advocate. Free legal aid is a right in India: call **NALSA on 15100**. In an emergency call **112**.
+
+---
+
+## What you get, at a glance
+
+Nyaya AI stands on [bitchat](https://github.com/permissionlesstech/bitchat-android)'s shoulders. Everything bitchat does, this app does — the same protocol, the same encryption, the same mesh, fully compatible with bitchat users on iOS and Android. On top of that foundation, Nyaya AI adds new layers built for people who need legal help on real phones in real conditions.
+
+```mermaid
+flowchart TB
+    subgraph NYAYA["🧡 Added by Nyaya AI"]
+        direction LR
+        AI["⚖️ AI legal assistant\nGemma 4, fully offline"]
+        LIB["📚 25 Indian Acts\nbundled and searchable"]
+        VOICE["🎙️ Voice mode\nspeak and listen"]
+        FAST["🚀 Wi-Fi fast lane\nfiles up to 256 MB"]
+    end
+    subgraph BITCHAT["💙 The bitchat foundation — carried forward complete"]
+        direction LR
+        MESH["📡 Bluetooth LE mesh\nno internet, no SIM"]
+        E2EE["🔐 Noise protocol\nend-to-end encryption"]
+        NOSTR["🌐 Nostr + Tor\noptional wider reach"]
+    end
+    NYAYA --> BITCHAT
+```
+
+| Capability | bitchat | **Nyaya AI** |
+|---|:---:|:---:|
+| **Encrypted messaging** | | |
+| Bluetooth LE mesh chat — no internet, no SIM, no account | ✅ | ✅ |
+| End-to-end encryption (Noise protocol, X25519, AES-256-GCM) | ✅ | ✅ |
+| Channels, private messages, store & forward, multi-hop relay | ✅ | ✅ |
+| Nostr geohash channels and bundled Tor | ✅ | ✅ |
+| Panic wipe, QR contact verification, packet padding & cover traffic | ✅ | ✅ |
+| Cross-platform with bitchat on iOS | ✅ | ✅ |
+| Voice notes, images and file transfer over the mesh | ✅ | ✅ |
+| **Smarter file sharing** | | |
+| A clear in-chat message when a file cannot be delivered | — | ✅ |
+| Oversized images automatically re-compressed to fit the mesh | — | ✅ |
+| Large private files — up to **256 MB** — over the encrypted Wi-Fi fast lane | — | ✅ |
+| Delivery confirmed only after the receiver verifies the file's SHA-256 | — | ✅ |
+| Interrupted transfers resume instead of starting over | — | ✅ |
+| Receiver checks free storage before accepting | — | ✅ |
+| **AI legal help** | | |
+| On-device AI lawyer (Gemma 4) that works in airplane mode | — | ✅ |
+| 25 complete Indian Acts bundled offline, cited by section | — | ✅ |
+| Answers in English, Hindi, Hinglish or your own language | — | ✅ |
+| Voice mode — speak the question, hear the answer | — | ✅ |
+| Long-conversation "Case File" memory | — | ✅ |
+| Saved conversations, encrypted on your phone | — | ✅ |
+| Incognito chat — never written to storage | — | ✅ |
+| Bring-your-own-key cloud mode (optional) | — | ✅ |
+| Offline legal library you can read yourself | — | ✅ |
+| Always routes to real help — NALSA 15100, emergency 112 | — | ✅ |
+
+*The point of this table is not that bitchat lacks anything it set out to do — it is a superb messenger, and all of it is in here. The point is that Nyaya AI is the same trusted foundation carried forward, with the updated facilities added so it can help users more powerfully: legal help that works offline, and file sharing that handles real-world sizes honestly.*
 
 ---
 
@@ -92,6 +147,14 @@ The fetcher validates that every download is a real PDF before writing it, retri
 
 *What it can do, and when it helps.*
 
+```mermaid
+flowchart LR
+    Q["🗣️ Your question\nEnglish · हिन्दी · Hinglish"] --> R["🔍 BM25 search over\n25 bundled Acts"]
+    R --> P["📜 Real law extracts\n+ guardrail prompt\n+ Case File memory"]
+    P --> M["🧠 Gemma 4\nrunning on your phone"]
+    M --> A["⚖️ Answer with real section numbers\n+ the free legal-aid helpline"]
+```
+
 - **Fully offline answers** — after a one-time model download, works permanently in airplane mode.
 - **Grounded in real law (RAG)** — every question searches the 25 bundled Acts and the matching passages are given to the model, which is instructed to cite section numbers **only** from those extracts. This is what stops it inventing sections.
 - **BM25 retrieval** over heading-aligned passages, with length normalisation so a few huge statutes cannot drown out everyday questions.
@@ -125,7 +188,7 @@ The fetcher validates that every download is a real PDF before writing it, retri
 
 *The complete bitchat messenger. Every feature included, nothing removed.*
 
-The **entire** bitchat for Android messenger ships inside this app. Nothing was removed, disabled or cut down: all 232 bitchat source files are byte-identical to upstream commit `b7f0b33`, and a test in the suite fails if the messenger is ever dropped from the build. Open **Nyaya AI** and tap **"Encrypted mesh chat"** on the home screen to use it.
+The **entire** bitchat for Android messenger ships inside this app. Nothing was removed, disabled or cut down: the messenger is upstream bitchat at commit `b7f0b33`, complete, with a handful of files deliberately **extended — never trimmed** — to make file sending more honest and more capable (see [the file fast lane](#sending-big-files-the-wi-fi-fast-lane) below). A test in the suite fails if the messenger is ever dropped from the build. Open **Nyaya AI** and tap **"Encrypted mesh chat"** on the home screen to use it.
 
 Why it belongs in a legal-help app: the moment you most need to tell someone your rights is often the moment the network is down, the area has no signal, your data pack has run out, or you do not want a record on a phone company's servers. Mesh chat and offline AI solve the same problem from two directions.
 
@@ -133,7 +196,7 @@ Why it belongs in a legal-help app: the moment you most need to tell someone you
 
 - **Bluetooth LE mesh networking** — phones find each other automatically and form a network with no router, no cell tower, no SIM and no internet.
 - **Multi-hop relay** — a message hops phone-to-phone to reach someone out of your direct Bluetooth range, so the group's reach is larger than any one phone's.
-- **Wi-Fi Aware transport** — an additional direct phone-to-phone radio path on supported devices, for more range and speed than Bluetooth alone.
+- **Wi-Fi Aware transport** — an additional direct phone-to-phone radio path on supported devices, for more range and speed than Bluetooth alone. In Nyaya AI this link also carries the **large-file fast lane** described below.
 - **Store and forward** — messages for someone who is offline are held and delivered automatically when they come back in range. You do not have to be online at the same moment.
 - **Cross-platform** — protocol-compatible with bitchat on iOS, so Android and iPhone users are on the same mesh.
 - **Delivery and read receipts** — you can see that a message actually arrived, which matters when it is important.
@@ -157,13 +220,43 @@ Why it belongs in a legal-help app: the moment you most need to tell someone you
 
 - **Private and group text messages**
 - **Voice notes** — record and send audio, useful when typing is hard or the user cannot read comfortably.
-- **Images**, with EXIF orientation handled correctly.
-- **File transfer** over the mesh.
+- **Images**, with EXIF orientation handled correctly — and if an image is too big for the mesh, the app **re-compresses it automatically to fit** instead of failing.
+- **File transfer** over the mesh, with **honest size limits**: the app checks what the receiving phone can actually reassemble *before* sending, and if a file cannot be delivered it says so with a clear message in the chat — never a silent failure or a stuck progress bar.
+- **Large files — up to 256 MB — over the Wi-Fi fast lane**, end-to-end encrypted, verified and resumable. Details below.
+
+### Sending big files: the Wi-Fi fast lane
+
+The Bluetooth mesh is built for messages, so it can only deliver small files. When you send something bigger to a private contact, Nyaya AI automatically checks for a faster road:
+
+```mermaid
+flowchart LR
+    A["📎 You pick a file"] --> B{"Small enough for\nthe Bluetooth mesh?"}
+    B -->|Yes| C["📡 Sent over the\nencrypted mesh"]
+    B -->|No| D{"Wi-Fi fast lane\navailable?"}
+    D -->|Yes| E["🚀 Sent phone-to-phone over Wi-Fi\nup to 256 MB · encrypted end-to-end\nSHA-256 verified · resumable"]
+    D -->|No| F{"Is it an image?"}
+    F -->|Yes| G["🖼️ Auto-compressed to fit,\nthen sent over the mesh"]
+    F -->|No| H["💬 A clear message in the chat\nexplains why, and what to do"]
+```
+
+What the fast lane gives you, concretely:
+
+- **Up to 256 MB per file** — original-quality photos, long voice recordings, scanned documents, video clips.
+- **End-to-end encrypted** — every transfer uses a **fresh AES-256-GCM key**, exchanged inside the already-encrypted Noise session, and every piece of the file is authenticated. Tampered data is rejected, never delivered.
+- **Direct phone-to-phone** — the file travels straight over the Wi-Fi Aware link between the two phones. No server, no relay, no third phone ever carries it.
+- **Verified delivery** — the send is marked delivered only after the receiving phone confirms the file's **SHA-256 fingerprint** matches. What arrives is exactly what was sent, or it is discarded.
+- **Resumable** — if the link drops mid-transfer, the send resumes from where it stopped instead of starting over.
+- **Polite to the receiver** — the receiving phone checks its free storage before accepting, and can decline.
+- **Live progress and cancel** — the same progress ring and cancel button as every other transfer.
+- **Streams from disk** — files are read and written in small chunks, so a 100 MB send never bloats the app's memory.
+
+The fast lane needs **Wi-Fi Aware** hardware on both phones (most mid-range and flagship Android phones from recent years have it). When it is not available, nothing breaks: images are fitted to the mesh automatically, and anything else gets an honest, visible explanation in the chat.
 
 ### Security and privacy
 
 - **End-to-end encryption** using the **Noise protocol** for private messages — nobody in the middle of the mesh can read them, including phones that relay them.
 - **X25519 / Curve25519** key exchange, **AES-256-GCM** message encryption, **Ed25519** digital signatures for authenticity, **Argon2id** for channel passwords.
+- **Per-transfer keys for large files** — each fast-lane transfer is protected by its own fresh AES-256-GCM key, exchanged inside the Noise session; every frame is authenticated, and a frame redirected at the wrong transfer or rewritten as a different message type fails closed.
 - **No accounts, no phone numbers, no email, no persistent identifier.**
 - **Ephemeral by default** — messages live in device memory unless a channel owner turns retention on.
 - **Packet padding and cover traffic** — message sizes and timing are obscured so an observer cannot infer much from traffic patterns.
@@ -277,6 +370,8 @@ It is also **free software** under the GNU General Public License v3.0 or later:
 
 <sub>Version 1.9.1 · Requires Android 8.0+ · The offline AI additionally needs a 64-bit phone with 4 GB+ RAM · Free forever, no ads, no tracking</sub>
 
+<sub>The honest file-size handling and the Wi-Fi file fast lane are in the source now and ship in the next release build.</sub>
+
 </div>
 
 <details>
@@ -337,12 +432,12 @@ Requires JDK 17+, Android SDK with platform 35 and build-tools 35, and about 3 G
 
 ```bash
 git clone https://github.com/Dhanrajs-Purament/nyaya-ai.git
-cd bitchat-android
+cd nyaya-ai
 echo "sdk.dir=$ANDROID_HOME" > local.properties
 
 pip install pypdf && python3 tools/kb/fetch_full_kb.py   # populate the legal library
 
-./gradlew testDebugUnitTest      # 154 unit tests
+./gradlew testDebugUnitTest      # run the unit tests
 ./gradlew assembleDebug          # debug APKs
 ./gradlew assembleRelease        # release APKs (unsigned unless configured below)
 ```
@@ -395,8 +490,14 @@ app/src/main/java/com/bitchat/android/nyaya/
 │   ├── NyayaModelCatalog.kt    the Gemma 4 models, sizes and magic bytes
 │   ├── ModelDownloadManager.kt resumable download + integrity verification
 │   └── LawyerSystemPrompt.kt   scope, honesty and safety-routing rules
+├── history/ChatHistoryStore.kt   encrypted saved conversations
 ├── memory/ConversationMemory.kt  rolling "Case File" for long consultations
 ├── settings/NyayaSettings.kt     Keystore-encrypted preferences
+├── transfer/
+│   ├── MeshTransferLimits.kt     honest size limits derived from the real receiver caps
+│   └── bulk/
+│       ├── BulkFrames.kt         fast-lane wire format + AES-256-GCM framing
+│       └── BulkTransferManager.kt chunked send/receive, resume, SHA-256 verification
 ├── ui/                            Compose screens: home, chat, voice, settings
 └── voice/VoiceManager.kt          speech in, speech out
 ```
@@ -404,6 +505,8 @@ app/src/main/java/com/bitchat/android/nyaya/
 **Answering a question:** the question is tokenised → BM25 finds the most relevant passages across the bundled acts → those passages plus the guardrail system prompt plus the running Case File go to whichever engine is active → the reply is appended to memory, and older turns are compacted into the Case File so a long conversation never overflows the model's context.
 
 **Model download:** verified against the exact expected byte count and the `LITERTLM` file header before the partial file is promoted, so an interrupted 2.4 GB transfer can never masquerade as a working model. Interrupted downloads resume.
+
+**Sending a large file:** the sender offers the file inside the Noise-encrypted session, with the file's SHA-256, its size and a fresh AES-256-GCM key. The receiver checks free storage, accepts, and the file streams across in authenticated 48 KB chunks with acknowledgements driving the progress ring. If the link drops, a re-offer resumes from the last chunk the receiver holds. Delivery is confirmed only after the receiver's own SHA-256 of the assembled file matches the offer. See [docs/nyaya/ARCHITECTURE.md](docs/nyaya/ARCHITECTURE.md) for the full design.
 
 ---
 
@@ -422,7 +525,7 @@ The icon is one shape carrying all three halves of the product. A **shield** for
 - No account, no sign-up, no analytics, no crash reporting, no ads.
 - In on-device mode, questions and answers never leave the phone. There is no server to leak.
 - API keys and the optional Hugging Face token are held in Android Keystore-encrypted preferences.
-- Mesh messages are end-to-end encrypted with the Noise protocol.
+- Mesh messages are end-to-end encrypted with the Noise protocol; large file transfers add a fresh per-transfer AES-256-GCM key exchanged inside that session.
 - The only network traffic the AI features ever make is the one-time model download, and whatever you explicitly send in BYOK cloud mode.
 
 See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
@@ -431,7 +534,7 @@ See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 
 ## Testing
 
-154 unit tests, of which 36 cover the Nyaya module:
+More than 200 unit tests:
 
 ```bash
 ./gradlew testDebugUnitTest          # JVM + Robolectric
@@ -439,6 +542,8 @@ See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 ```
 
 The Nyaya tests run against the **real bundled legal library**, not fixtures. They prove that an FIR-refusal question retrieves BNSS Section 173 with the Superintendent-of-Police and Magistrate remedies, that the NALSA 15100 helpline is reachable, that both income-tax regimes are labelled, that every act came from an official source, that a 30-turn conversation compacts without losing facts, and that no hard-coded Gemma chat-template markers ever creep back in.
+
+The file fast lane has its own wire-format suite: a tampered frame, a frame rewritten as a different message type, or a frame redirected at another transfer must all fail closed; a Devanagari file name (सबूत-photo.jpg) must round-trip intact; and the largest encrypted chunk must stay under the socket layer's 64 KB frame cap.
 
 Keystore-backed crypto is tested under `src/androidTest`, because `AndroidKeyStore` does not exist on the JVM and Robolectric does not emulate it.
 
@@ -453,6 +558,8 @@ Known limitations:
 - A tenancy question about a "security deposit" retrieves company law, because "securities" and "deposits" are strong company-law terms. Pinned by a test so it stays visible; needs phrase-level matching to fix.
 - The Income-tax Act 2025 is not published on `indiacode.nic.in` or any reachable `.gov.in` host, so it comes from PRS Legislative Research's copy of the text as passed by Lok Sabha. The file says so.
 - 2.4 GB is a heavy download for the users this is aimed at. There is no smaller Gemma 4.
+- The Wi-Fi file fast lane needs **Wi-Fi Aware** hardware on both phones; many budget phones do not have it. Where it is missing, the app falls back to the honest mesh behaviour — images auto-fitted, everything else explained visibly. Like the rest of the app, the fast lane has passed its test suite but still needs a two-phone field test.
+- The v1.9.1 release APKs above were built before the file-transfer upgrades landed; those ship in the next release build.
 
 ---
 
