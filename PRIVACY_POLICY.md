@@ -32,6 +32,8 @@ All of the following is stored only in the app's private storage on your device.
 | Your conversations — your questions, the AI's answers, and the running "Case File" summary | Saved on this phone, encrypted with a key held in the Android Keystore | Delete one from the menu, or **Settings → Delete all conversations** |
 | The downloaded AI model (2.4–3.4 GB) | App-private storage | Delete the model in Settings, or uninstall |
 | Your settings, including any API key and Hugging Face token | Encrypted with a key held in the Android Keystore | Clear the field, clear app data, or uninstall |
+| Mesh identity keys and nicknames | Encrypted with a key held in the Android Keystore | bitchat's panic/wipe action, or uninstall |
+| Files received in mesh chat — voice notes, images and files someone sent you | App-private storage | Delete them in the app, clear app data, or uninstall |
 
 ### Your conversations belong to you
 
@@ -64,7 +66,6 @@ Nyaya AI and the mesh messenger are two modes of one app, and each owns its own 
 - Mesh chat's **panic wipe** clears mesh chat's data and identity. It does **not** delete your saved Nyaya conversations, because those are yours to delete.
 
 If you want both gone, use each mode's own control, or uninstall the app.
-| Mesh identity keys and nicknames | Encrypted with a key held in the Android Keystore | bitchat's panic/wipe action, or uninstall |
 
 Uninstalling the app removes all of it. The app has Android backup disabled, so none of this is copied into a cloud backup.
 
@@ -99,6 +100,7 @@ The full bitchat messenger is included in this app. Its privacy properties are d
 | **Nickname** | The display name you pick or are given | Until you change it |
 | **Favourite peers** | Public keys of people you chose to remember | Until you remove them |
 | **Message history** | Only if a channel owner turned retention on. Stored encrypted on your device | Until you clear it |
+| **Received files** | Voice notes, images and files someone sent you, kept in app-private storage so you can open them | Until you delete them |
 | **Active connections and routing info** | To deliver messages | Forgotten when the app closes |
 | **Cached messages for offline peers** | Store-and-forward, so someone out of range still gets your message | Maximum 12 hours |
 
@@ -110,11 +112,26 @@ In a password-protected channel, anyone with the password sees your messages and
 
 They cannot see your phone number, your real name, your contacts, your location or your other messages, because the app never has them.
 
+### Files you send and receive
+
+Voice notes, images and files sent privately in mesh chat travel with the same end-to-end encryption as private messages.
+
+Large private files (up to 256 MB) travel over a **direct, phone-to-phone Wi-Fi link** (Wi-Fi Aware) when both phones support it:
+
+- Each transfer is encrypted with a **fresh AES-256-GCM key** created for that transfer alone, and that key is itself exchanged inside the already-encrypted Noise session — so only the phone you are sending to can read the file.
+- Every piece of the file is authenticated. Data that has been tampered with is rejected, never delivered.
+- **No server, relay or third phone is involved.** The file goes only to the phone you sent it to, directly.
+- The receiving phone checks its free storage before accepting, and confirms delivery only after verifying the file's **SHA-256 fingerprint** — so what arrives is exactly what was sent.
+- Received files are stored in the app's private storage on the receiving phone until deleted there.
+
+As with messages: once a file has been delivered to someone else's phone, its copy there is under their control, not yours. Send files as carefully as you would hand over paper.
+
 ### Encryption used
 
 - **Noise protocol** for the private-message transport
 - **X25519 / Curve25519** for key exchange
 - **AES-256-GCM** for message encryption
+- **Fresh per-transfer AES-256-GCM keys** for large file transfers, exchanged inside the Noise session
 - **Ed25519** for digital signatures, so a message cannot be forged
 - **Argon2id** to derive channel passwords
 - **Packet padding and cover traffic**, so message size and timing reveal little to an observer
@@ -128,13 +145,13 @@ No location history is collected, stored or shared, ever.
 
 ### Internet, only if you choose it
 
-Bluetooth mesh mode uses **no internet and no servers**. Two optional features do use the internet: **geohash channels**, which relay through public Nostr relays, and **Tor**, which routes that traffic through the Tor network for stronger privacy. Both are yours to switch on or leave off.
+Bluetooth mesh mode uses **no internet and no servers**. Two optional features do use the internet: **geohash channels**, which relay through public Nostr relays, and **Tor**, which routes that traffic through the Tor network for stronger privacy. Both are yours to switch on or leave off. The large-file fast lane is **not** an internet feature: it is a direct radio link between the two phones and works with no internet at all.
 
 ### Wiping everything
 
 The mesh messenger has an **emergency wipe (panic mode)** that immediately destroys the identity key and stored data. In this app it closes the entire application, the AI side included. Closing the app also makes your presence on the mesh disappear.
 
-**You remain responsible for what you send.** Messages travel directly between phones with no server, but that does not make an unlawful message lawful. See [TERMS_OF_USE.md](TERMS_OF_USE.md).
+**You remain responsible for what you send.** Messages and files travel directly between phones with no server, but that does not make an unlawful message lawful. See [TERMS_OF_USE.md](TERMS_OF_USE.md).
 
 ---
 
@@ -149,7 +166,7 @@ The complete text of 25 Indian Acts is bundled inside the app when you install i
 The app asks only for what a feature actually needs, and only when you use that feature.
 
 - **Microphone** — only for voice mode, and only while you are speaking. Speech recognition uses Android's own service on your device. Audio is not recorded to a file or uploaded by this app.
-- **Bluetooth and Nearby devices** — for the mesh messenger to find phones near you.
+- **Bluetooth and Nearby devices** — for the mesh messenger to find phones near you, and for the direct phone-to-phone Wi-Fi link (Wi-Fi Aware) that carries large file transfers.
 - **Location** — Android **requires** location permission before any app is allowed to scan for Bluetooth devices. This app does not use your location for anything else, does not store it, and does not send it anywhere. If you never use mesh chat, you never need to grant it.
 - **Notifications** — to show incoming mesh messages and the mesh service status.
 - **Camera** — only for scanning a QR code to verify a contact in mesh chat.
@@ -172,9 +189,9 @@ This app is intended to be genuinely useful to students and young people, and th
 
 ## Security
 
-Your API keys, tokens and mesh identity keys are encrypted using a key held in the Android Keystore, which is backed by your device's secure hardware where available. Mesh messages are end-to-end encrypted using the Noise protocol. Screenshots of the app are disabled in the Android recents screen.
+Your API keys, tokens and mesh identity keys are encrypted using a key held in the Android Keystore, which is backed by your device's secure hardware where available. Mesh messages are end-to-end encrypted using the Noise protocol, and large file transfers add a fresh per-transfer AES-256-GCM key exchanged inside that session. Screenshots of the app are disabled in the Android recents screen.
 
-No system is perfect. If your phone itself is compromised, or if someone has your unlocked phone, the protections above cannot help — encryption at rest defends against an offline extraction of app storage, not against someone holding your phone with the screen unlocked. So use a screen lock, delete conversations you no longer need, and use an **incognito chat** for anything you would rather never be saved.
+No system is perfect. If your phone itself is compromised, or if someone has your unlocked phone, the protections above cannot help — encryption at rest defends against an offline extraction of app storage, not against someone holding your phone with the screen unlocked. So use a screen lock, delete conversations and received files you no longer need, and use an **incognito chat** for anything you would rather never be saved.
 
 To report a security problem, see [SECURITY.md](SECURITY.md).
 

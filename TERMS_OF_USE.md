@@ -35,7 +35,7 @@ You agree not to use Nyaya AI:
 - to pretend to be a lawyer, or to pass its output off as advice from a qualified advocate;
 - to give legal advice to other people for payment on the strength of its answers.
 
-The mesh messenger transmits messages directly between phones. **You are responsible for what you send.** The absence of a server does not make unlawful messages lawful.
+The mesh messenger transmits messages **and files** directly between phones — including large files sent over the direct Wi-Fi fast lane. **You are responsible for everything you send.** The absence of a server does not make unlawful content lawful.
 
 ---
 
@@ -58,7 +58,7 @@ Always verify a section against the current official text before acting on it.
 
 Nyaya AI is provided **"as is", without warranty of any kind**, express or implied, including any warranty of merchantability, fitness for a particular purpose, accuracy, or non-infringement. This is the same disclaimer that the GNU General Public License v3 attaches to this software; sections 15 and 16 of that licence apply and are reproduced in [LICENSE.md](LICENSE.md).
 
-To the maximum extent permitted by law, the authors and contributors are **not liable** for any loss or damage — including any adverse outcome in a legal matter, missed deadline, penalty, or loss of data — arising from your use of, or inability to use, this app. You use it at your own risk and on your own judgement.
+To the maximum extent permitted by law, the authors and contributors are **not liable** for any loss or damage — including any adverse outcome in a legal matter, missed deadline, penalty, or loss of data (including files sent or received over the mesh or the Wi-Fi fast lane) — arising from your use of, or inability to use, this app. You use it at your own risk and on your own judgement.
 
 Nothing in these terms limits any liability that cannot lawfully be limited, or any right you have as a consumer under Indian law that cannot be waived.
 
@@ -90,7 +90,7 @@ The app is and will remain **free of charge to users**. There is no paid tier, n
 
 ## 8. Privacy
 
-See [PRIVACY_POLICY.md](PRIVACY_POLICY.md). In short: there is no server, and nothing you type leaves your phone in the default on-device mode.
+See [PRIVACY_POLICY.md](PRIVACY_POLICY.md). In short: there is no server, and nothing you type leaves your phone in the default on-device mode. Files sent to a contact travel directly between the two phones, end-to-end encrypted.
 
 ---
 

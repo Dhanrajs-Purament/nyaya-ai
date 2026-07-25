@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- **Wi-Fi file fast lane.** Private files up to **256 MB** now travel directly
+  phone-to-phone over the Wi-Fi Aware link when both phones support it and an
+  end-to-end encrypted Noise session is established. Each transfer uses a fresh
+  AES-256-GCM key exchanged inside the Noise session; every frame is
+  authenticated (tampered, retyped or redirected frames fail closed); files
+  stream from disk in 48 KB chunks so memory stays flat; the receiver checks
+  free storage before accepting; interrupted transfers resume from where they
+  stopped; and delivery is confirmed only after the receiver verifies the
+  file's SHA-256. Progress and cancel work exactly like mesh transfers.
+
+### Fixed
+- **Silent file-transfer failure, fixed at the root.** The sender accepted
+  files up to a nominal 50 MB while the receiving phone's reassembly caps
+  allowed roughly 100 KB, so large sends failed silently with a stuck progress
+  indicator. All send paths now validate against limits derived from the real
+  receiver caps, refuse undeliverable files *before* sending with a visible
+  explanation in the same conversation, and automatically re-compress
+  oversized images down a quality ladder until they fit the mesh.
+
+### Changed
+- README rewritten with a visual capability comparison against upstream
+  bitchat, transfer-flow and answer-pipeline diagrams, and corrected build
+  instructions; the privacy policy and terms of use now cover file transfers
+  explicitly; the architecture document covers the fast lane design.
+
 ## [1.9.1] - 2026-07-25
 
 ### Fixed
@@ -123,9 +153,6 @@ Renamed to **Nyaya AI**. Application ID is now `in.nyaya.ai`.
 ### Improved
 - Use HorizontalDivider instead of deprecated Divider
 - Use contentPadding instead of padding so items remain fully visible
-
-
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.7]
 
