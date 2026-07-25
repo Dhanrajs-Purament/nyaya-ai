@@ -2,7 +2,7 @@
 
 > Official bare act downloaded from Government of India sources.
 > Source: https://www.indiacode.nic.in/bitstream/123456789/15479/1/the_insolvency_and_bankruptcy_code%2C_2016.pdf
-> This is the complete text for offline retrieval by Nyaya AI Lawyer.
+> This is the complete text for offline retrieval by Nyaya AI.
 
 THE INSOLVENCY AND BANKRUPTCY CODE, 2016
 Last Update 01-6-2020

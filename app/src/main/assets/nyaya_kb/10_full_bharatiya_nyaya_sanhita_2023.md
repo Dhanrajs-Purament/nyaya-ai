@@ -2,7 +2,7 @@
 
 > Official bare act downloaded from Government of India sources.
 > Source: https://www.indiacode.nic.in/bitstream/123456789/20062/1/a202345.pdf
-> This is the complete text for offline retrieval by Nyaya AI Lawyer.
+> This is the complete text for offline retrieval by Nyaya AI.
 
 The Bharatiya Nyaya Sanhita, 2023
  (ACT NO. 45 OF 2023)

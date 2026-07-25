@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Nyaya AI Lawyer — monochrome layer for Android 13+ themed icons.
+  Nyaya AI — monochrome layer for Android 13+ themed icons.
 
   The system tints this single-colour silhouette, so it drops the shield fill and
   the amber/white split and keeps only the shapes that carry the meaning:
@@ -15,12 +15,12 @@
     <path
         android:pathData="M54,20 L83,29.5 L83,52.5 C83,70.5 70.5,82.5 54,89 C37.5,82.5 25,70.5 25,52.5 L25,29.5 Z"
         android:strokeColor="#FF000000"
-        android:strokeWidth="2.6" />
+        android:strokeWidth="3.0" />
 
-    <path android:pathData="M52.6,36 h2.8 v38 h-2.8 z" android:fillColor="#FF000000" />
+    <path android:pathData="M52.2,36 h3.6 v38 h-3.6 z" android:fillColor="#FF000000" />
     <path android:pathData="M45,74 h18 v3.2 h-18 z" android:fillColor="#FF000000" />
     <path android:pathData="M41.5,77.2 h25 v3.4 h-25 z" android:fillColor="#FF000000" />
-    <path android:pathData="M33,44 h42 v2.8 h-42 z" android:fillColor="#FF000000" />
+    <path android:pathData="M33,43.6 h42 v3.6 h-42 z" android:fillColor="#FF000000" />
     <path android:pathData="M33.4,46.8 h1.6 v6 h-1.6 z" android:fillColor="#FF000000" />
     <path android:pathData="M73,46.8 h1.6 v6 h-1.6 z" android:fillColor="#FF000000" />
 

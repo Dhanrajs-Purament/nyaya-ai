@@ -35,7 +35,7 @@ import com.bitchat.android.util.AppConstants
 /**
  * Entry point for the whole application.
  *
- * Nyaya AI Lawyer and bitchat's encrypted mesh messenger ship as one app with a
+ * Nyaya AI and bitchat's encrypted mesh messenger ship as one app with a
  * single launcher icon. This activity is that icon; the mesh messenger is
  * reached from the home screen, which starts [MainActivity] in the same task, so
  * the system Back gesture returns here.

@@ -1,1 +1,21 @@
-A secure, decentralized, peer-to-peer messaging app that works over Bluetooth mesh networks. No internet required, no servers, no phone numbers - just pure encrypted communication.
+Free legal help for India, on your phone, with no internet and no account.
+
+Nyaya AI answers legal questions for anyone who cannot afford a lawyer — students, workers, tenants, anyone. Two things make it different from an ordinary chat app.
+
+IT WORKS WITH THE INTERNET SWITCHED OFF
+A Gemma 4 model runs on your phone itself, and the complete text of 25 Indian Acts is bundled inside the app. Turn on airplane mode and ask "police refuse to file my FIR, what are my rights?" — you get an answer grounded in the actual words of BNSS Section 173, with the free legal aid helpline.
+
+NOTHING YOU TYPE EVER LEAVES YOUR PHONE
+No account, no server, no analytics, no advertising. Questions about domestic violence, a leaked photo or a police case should not exist in anyone's logs, so they never leave your device.
+
+THE LAW, ALREADY INSIDE THE APP
+25 complete bare Acts from official Government of India sources: the new criminal codes (BNS, BNSS, BSA), the Constitution, contracts, property, civil procedure, marriage and succession, domestic violence, dowry, consumer protection, the IT Act, data protection, RTI, companies, insolvency, GST, motor vehicles, and both income-tax regimes — the 1961 Act marked as repealed and the Income-tax Act 2025 in force from 1 April 2026. Plus 10 plain-language guides covering police procedure, arrest rights, free legal aid, and online harassment and leaked photos.
+
+ENCRYPTED CHAT WITH NO INTERNET
+Includes bitchat's Bluetooth mesh messenger: phones talk directly to each other with no cell tower, no SIM and no internet, end-to-end encrypted with the Noise protocol.
+
+FREE FOREVER
+No subscription, no ads, no paid tier, no data sold. Open source under the GNU GPL v3.
+
+IMPORTANT
+This app gives legal information, not legal advice. It is not a lawyer and does not create an advocate-client relationship. For anything serious, get a qualified advocate — free legal aid is your right in India, call NALSA on 15100. In an emergency call 112.

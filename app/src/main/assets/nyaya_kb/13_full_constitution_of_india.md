@@ -2,7 +2,7 @@
 
 > Official bare act downloaded from Government of India sources.
 > Source: https://cdnbbsr.s3waas.gov.in/s380537a945c7aaa788ccfcdf1b99b5d8f/uploads/2024/07/20240716890312078.pdf
-> This is the complete text for offline retrieval by Nyaya AI Lawyer.
+> This is the complete text for offline retrieval by Nyaya AI.
 
 £ÉÉ®iÉ BÉEÉ ºÉÆÉÊ´ÉvÉÉxÉ [1, 2024]THE CONSTITUTION OF INDIA[As on 1stMay, 2024] 2024GOVERNMENT OF INDIAMINISTRY OF LAW AND JUSTICELEGISLATIVE DEPARTMENT, OFFICIAL LANGUAGES WING
 PREFACEThis is the  sixth pocket size edition of the Constitution of India in the diglot form. In this edition, the text of the Constitution of India has been brought up-to-date by incorporating therein all the amendments up to the Constitution (One Hundred and Sixth Amendment) Act, 2023. The foot notes below the text indicate the Constitution Amendment Acts by which such amendments have been made. The Constitution (One Hundredth Amendment) Act, 2015 containing details of acquired and transferred territories between the Governments of India and Bangladesh has been provided in Appendix I.The Constitution (Application to Jammu and Kashmir) Order, 2019 and the declaration under article 370(3) of the Constitution have been provided respectively in Appendix II and Appendix III for reference.New Delhi;Dr. Rajiv Mani,1stMay, 2024Secretary to the Government of India.

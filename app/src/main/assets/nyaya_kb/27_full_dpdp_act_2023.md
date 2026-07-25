@@ -2,7 +2,7 @@
 
 > Official bare act downloaded from Government of India sources.
 > Source: https://www.indiacode.nic.in/bitstream/123456789/22037/1/a2023-22.pdf
-> This is the complete text for offline retrieval by Nyaya AI Lawyer.
+> This is the complete text for offline retrieval by Nyaya AI.
 
 The Digital Personal Data Protection Act, 2023
 (ACT NO. 22 OF 2023)

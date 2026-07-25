@@ -2,7 +2,7 @@
 
 > Official bare act downloaded from Government of India sources.
 > Source: https://www.indiacode.nic.in/bitstream/123456789/20099/1/A202346.pdf
-> This is the complete text for offline retrieval by Nyaya AI Lawyer.
+> This is the complete text for offline retrieval by Nyaya AI.
 
 The Bharatiya Nagarik Suraksha Sanhita, 2023
  (ACT NO. 46 OF 2023)

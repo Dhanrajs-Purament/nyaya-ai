@@ -453,4 +453,9 @@
   </plurals>
 
     <string name="bluetooth_recommended">Bluetooth Recommended</string>
+    <!-- Product identity. app_name above is bitchat's own in-UI name and is
+         intentionally left alone; these are the names the user sees for the app
+         itself and for its two halves. -->
+    <string name="nyaya_app_name">Nyaya AI</string>
+    <string name="nyaya_mesh_label">Mesh Chat</string>
 </resources>

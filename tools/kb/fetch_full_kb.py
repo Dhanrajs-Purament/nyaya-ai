@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Nyaya AI Lawyer - FULL Legal Library Fetcher
+Nyaya AI - FULL Legal Library Fetcher
 ============================================
 Downloads the COMPLETE official bare-act PDFs for every law in the Nyaya
 library from Government of India sources (India Code, Legislative Dept,
@@ -420,7 +420,7 @@ def main() -> int:
             f"# {title} — FULL TEXT\n\n"
             f"> Official bare act downloaded from Government of India sources.\n"
             f"> Source: {source_url}\n"
-            f"> This is the complete text for offline retrieval by Nyaya AI Lawyer.\n\n"
+            f"> This is the complete text for offline retrieval by Nyaya AI.\n\n"
         )
         if note:
             header += f"## Status of this Act — read this first\n\n{note}\n\n"

@@ -1,4 +1,4 @@
-# Nyaya AI Lawyer — Complete Legal Library
+# Nyaya AI — Complete Legal Library
 
 The user's mandate: **every book, every law — no user should suffer because something was left out.**
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Renders the Nyaya AI Lawyer launcher icon to legacy density PNGs.
+Renders the Nyaya AI launcher icon to legacy density PNGs.
 
 Android 8.0+ (the app's minSdk is 26) always uses the adaptive icon defined in
 res/mipmap-anydpi-v26/ic_launcher.xml, which is built from the vector drawables
@@ -43,7 +43,7 @@ AMBER = (247, 197, 68)
 # The vectors use a 108x108 viewport; the legacy icon has no adaptive mask, so
 # the art is scaled up to fill more of the canvas than the 72x72 safe zone.
 VIEWPORT = 108.0
-LEGACY_SCALE = 1.18
+LEGACY_SCALE = 1.24
 
 
 def _lerp(a, b, t):
@@ -106,9 +106,9 @@ def render(size):
         (54, 20), (83, 29.5), (83, 52.5), (78, 66), (68, 78), (54, 89),
         (40, 78), (30, 66), (25, 52.5), (25, 29.5),
     ]
-    draw.polygon([p(*pt) for pt in shield], fill=(255, 255, 255, 38))
+    draw.polygon([p(*pt) for pt in shield], fill=(255, 255, 255, 51))
     draw.line([p(*pt) for pt in shield + [shield[0]]],
-              fill=(255, 255, 255, 140), width=max(1, int(2.2 * unit)), joint="curve")
+              fill=(255, 255, 255, 179), width=max(1, int(2.8 * unit)), joint="curve")
 
     # Mesh links from the AI node down to the beam nodes.
     line(48.5, 33.6, 34.2, 45.4, AMBER + (115,), 1.5)
@@ -116,10 +116,10 @@ def render(size):
     line(54, 37.7, 54, 44, AMBER + (191,), 1.8)
 
     # Scales: post, base, foot, beam, hangers.
-    rect(52.6, 36, 55.4, 74, WHITE)
+    rect(52.2, 36, 55.8, 74, WHITE)
     rect(45, 74, 63, 77.2, WHITE)
     rect(41.5, 77.2, 66.5, 80.6, WHITE)
-    rect(33, 44, 75, 46.8, WHITE)
+    rect(33, 43.6, 75, 47.2, WHITE)
     rect(33.4, 46.8, 35.0, 52.8, WHITE + (217,))
     rect(73.0, 46.8, 74.6, 52.8, WHITE + (217,))
 

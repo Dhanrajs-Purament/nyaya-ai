@@ -1,4 +1,4 @@
-# Nyaya AI Lawyer — Architecture
+# Nyaya AI — Architecture
 
 Nyaya (न्याय, "justice") is an offline-first AI legal-help layer built on top of the
 bitchat-android mesh messenger. The entire bitchat stack (BLE mesh, Noise XX E2EE,

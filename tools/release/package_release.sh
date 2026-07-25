@@ -26,7 +26,7 @@ if [[ -z "$VERSION" ]]; then
   exit 1
 fi
 
-BASE="Nyaya-AI-Lawyer-v${VERSION}"
+BASE="Nyaya-AI-v${VERSION}"
 
 # gradle-output-name : published-name
 #

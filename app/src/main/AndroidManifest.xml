@@ -74,7 +74,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="@string/app_name"
+        android:label="@string/nyaya_app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.BitchatAndroid"
         tools:targetApi="31">
@@ -94,13 +94,13 @@
             android:theme="@style/Theme.BitchatAndroid"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Nyaya AI Lawyer — offline-first legal help. Shown as a second launcher
+        <!-- Nyaya AI — offline-first legal help. Shown as a second launcher
              entry so users can open the AI lawyer directly, while the full bitchat
              mesh experience stays untouched. -->
         <activity
             android:name=".nyaya.NyayaActivity"
             android:exported="true"
-            android:label="Nyaya AI Lawyer"
+            android:label="@string/nyaya_app_name"
             android:theme="@style/Theme.BitchatAndroid"
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTop">
@@ -118,7 +118,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="@string/nyaya_mesh_label"
             android:theme="@style/Theme.BitchatAndroid"
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTop">

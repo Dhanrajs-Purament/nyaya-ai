@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+## [1.8.0] - 2026-07-25
+
+Renamed to **Nyaya AI**. Application ID is now `in.nyaya.ai`.
+
+### Added
+- On-device Gemma 4 (E2B default, E4B optional) through Google's LiteRT-LM runtime, replacing MediaPipe. The models are ungated Apache-2.0 bundles, so offline AI no longer needs a Hugging Face account.
+- Both income-tax regimes in the offline library, each with a status banner: the Income-tax Act 1961 as **repealed**, and the Income-tax Act 2025 as **in force from 1 April 2026**.
+- Curated guide for online harassment, leaked photos and cyber crime, mapping everyday language onto verified BNS and IT Act sections, and recording that IT Act s.66A was struck down in *Shreya Singhal* (2015).
+- Single launcher icon: bitchat's encrypted mesh messenger now opens from the Nyaya home screen. Nyaya also honours bitchat's force-finish broadcast, so panic-wipe closes the whole app.
+- New brand icon: shield, scales of justice, and a mesh/AI node graph forming the scales' beam.
+- Complete documentation: privacy policy, terms of use, third-party licences and attribution, security policy, contributing guide and code of conduct.
+- Model downloads are verified against the expected byte count and file magic before use, and resume after interruption.
+
+### Changed
+- Retrieval now uses Okapi BM25 with length normalisation; without it the two large tax Acts swamped consumer and cyber questions.
+- Android Gradle Plugin 8.10.1 to 8.13.2, Java 11 target, and the current Kotlin compilerOptions DSL. Release builds now have no R8 warnings.
+- Release APKs are published under self-explaining names, with the recommended download listed first.
+
+### Fixed
+- The unit-test suite is green: the AndroidKeyStore-dependent encryption test was miscategorised as a JVM test, which Robolectric can never run, and is now an instrumentation test.
+- Legal library fetcher repaired: the previous User-Agent was rejected by India Code with HTTP 403, and five pinned URLs had rotted. 25 of 25 Acts now fetch, and the fetcher re-discovers moved documents by title.
+- BNS text now comes from the enacted Act on India Code rather than a Bill PDF.
+
 ## [1.4.0] - 2025-10-15
 ### Fixed
 - fix: Resolve debug settings bottom sheet crash on some devices (Issue #472)

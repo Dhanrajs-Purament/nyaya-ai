@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config
 /**
  * Pins the "one app, both features" integration.
  *
- * Nyaya AI Lawyer and bitchat's encrypted mesh messenger ship in a single APK
+ * Nyaya AI and bitchat's encrypted mesh messenger ship in a single APK
  * behind a single launcher icon. Earlier builds declared both activities as
  * launchers, which put two separate icons on the user's home screen and made the
  * mesh messenger look like a different app. These tests fail if that regresses,

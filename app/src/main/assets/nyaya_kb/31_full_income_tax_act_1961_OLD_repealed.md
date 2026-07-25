@@ -2,7 +2,7 @@
 
 > Official bare act downloaded from Government of India sources.
 > Source: https://web.archive.org/web/20260324194825id_/https://www.indiacode.nic.in/bitstream/123456789/2435/1/a1961-43.pdf
-> This is the complete text for offline retrieval by Nyaya AI Lawyer.
+> This is the complete text for offline retrieval by Nyaya AI.
 
 ## Status of this Act — read this first
 

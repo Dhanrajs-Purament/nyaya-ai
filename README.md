@@ -1,12 +1,21 @@
 <div align="center">
 
-<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" width="120" alt="Nyaya AI Lawyer icon" />
+<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" width="120" alt="Nyaya AI icon" />
 
-# Nyaya AI Lawyer
+# Nyaya AI
 
 **Free legal help for India, on your phone, with no internet and no account.**
 
+*न्याय — justice*
+
 Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline · encrypted Bluetooth mesh messaging
+
+[![Licence: GPL v3](https://img.shields.io/badge/Licence-GPL%20v3-blue.svg)](LICENSE.md)
+[![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3ddc84.svg)](#install)
+[![Price](https://img.shields.io/badge/Price-Free%20forever-brightgreen.svg)](#free-forever)
+[![Privacy](https://img.shields.io/badge/Data%20collected-None-brightgreen.svg)](PRIVACY_POLICY.md)
+
+[Install](#install) · [Legal library](#the-offline-legal-library) · [Privacy](PRIVACY_POLICY.md) · [Terms](TERMS_OF_USE.md) · [Licences](THIRD_PARTY_LICENSES.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 </div>
 
@@ -14,17 +23,18 @@ Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline 
 
 ## What this is
 
-Nyaya AI Lawyer answers legal questions for people in India who cannot afford a lawyer. It does two things that ordinary chat apps cannot:
+Nyaya AI answers legal questions for people in India who cannot afford a lawyer — students, workers, tenants, anyone. It does two things ordinary apps cannot:
 
-**It works with the internet switched off.** A Gemma 4 model runs on the phone itself and the complete text of 25 Indian acts is bundled inside the app. Ask "the police refuse to file my FIR, what are my rights?" in airplane mode and you get an answer grounded in the actual words of BNSS Section 173, together with the free-legal-aid helpline.
+**It works with the internet switched off.** A Gemma 4 model runs on the phone itself and the complete text of 25 Indian Acts is bundled inside the app. Ask *"police refuse to file my FIR, what are my rights?"* in airplane mode and you get an answer grounded in the actual words of BNSS Section 173, together with the free legal aid helpline.
 
-**Nothing you type ever leaves your phone.** There is no account, no server, and no telemetry. That matters for the people this is built for — someone asking about domestic violence, a leaked photo, or a police case does not want that question in anyone's logs.
+**Nothing you type ever leaves your phone.** There is no account, no server and no telemetry. That matters for the people this is built for — someone asking about domestic violence, a leaked photo, or a police case does not want that question in anyone's logs.
+
 
 It is built on top of [bitchat](https://github.com/permissionlesstech/bitchat-android), so it also carries bitchat's encrypted Bluetooth-mesh messaging: phones talk to each other directly, with no cell tower and no internet, using the Noise protocol.
 
 ### One app, two halves
 
-Both features ship in a single APK behind a **single launcher icon**. Open **Nyaya AI Lawyer** and the home screen has an **"Encrypted mesh chat"** card that opens the full bitchat messenger; Back returns you to the AI lawyer.
+Both features ship in a single APK behind a **single launcher icon**. Open **Nyaya AI** and the home screen has an **"Encrypted mesh chat"** card that opens the full bitchat messenger; Back returns you to the AI lawyer.
 
 The messenger keeps its own activity rather than being redrawn as a screen inside the AI lawyer. That is deliberate: bitchat's `MainActivity` owns the mesh service lifecycle, the Bluetooth onboarding and permission flow, its own back-press handling and several broadcast receivers. Re-hosting its UI elsewhere would mean duplicating all of that, and **every bitchat source file in this repository is byte-identical to upstream**, which keeps future merges from upstream clean. Nyaya also listens for bitchat's force-finish broadcast, so quitting or panic-wiping closes the whole app rather than leaving the AI screen open behind it.
 
@@ -109,9 +119,33 @@ The fetcher validates that every download is a real PDF before writing it, retri
 
 ---
 
+## Free forever
+
+Nyaya AI is **free of charge to every user, permanently**. No subscription, no paid tier, no advertising, no in-app purchase, no "pro" version, no data sold. It was built to help people who cannot afford a lawyer, and charging them would defeat the point.
+
+It is also **free software** under the GNU General Public License v3.0 or later: you may use it, read it, modify it and share it. If you distribute a modified version you must pass those same freedoms on. See [LICENSE.md](LICENSE.md) and [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+
+---
+
+## Documentation
+
+| Document | What it covers |
+|---|---|
+| [PRIVACY_POLICY.md](PRIVACY_POLICY.md) | What is stored, what never leaves your phone, every permission and why |
+| [TERMS_OF_USE.md](TERMS_OF_USE.md) | Legal disclaimer, acceptable use, no-warranty terms |
+| [LICENSE.md](LICENSE.md) | GNU GPL v3.0 full text |
+| [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) | bitchat, Gemma 4, LiteRT-LM, every library, and the legal texts' provenance |
+| [SECURITY.md](SECURITY.md) | How to report a vulnerability privately |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to help, including without writing code |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community standards |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
+| [docs/nyaya/ARCHITECTURE.md](docs/nyaya/ARCHITECTURE.md) | Deeper technical design |
+
+---
+
 ## Install
 
-Go to [**Releases**](https://github.com/Dhanrajs-Purament/bitchat-android/releases) and download the file marked **RECOMMENDED**. If you are unsure, that is the one.
+Go to [**Releases**](https://github.com/Dhanrajs-Purament/nyaya-ai/releases) and download the file marked **RECOMMENDED**. If you are unsure, that is the one.
 
 | File | Who it is for | Size |
 |---|---|---|
@@ -123,7 +157,7 @@ Go to [**Releases**](https://github.com/Dhanrajs-Purament/bitchat-android/releas
 
 All of them are the same app — they differ only in which CPU type they carry.
 
-Then: tap the downloaded file → allow **"install from unknown sources"** when Android asks (this app is not on Play Store) → open **Nyaya AI Lawyer** → **Settings** → pick a model → **Download & load model** over Wi-Fi → ask your question.
+Then: tap the downloaded file → allow **"install from unknown sources"** when Android asks (this app is not on Play Store) → open **Nyaya AI** → **Settings** → pick a model → **Download & load model** over Wi-Fi → ask your question.
 
 Prefer not to download 2.4 GB? Skip the model and paste your own API key in Settings instead.
 
@@ -140,7 +174,7 @@ sha256sum -c SHA256SUMS.txt --ignore-missing
 Requires JDK 17+, Android SDK with platform 35 and build-tools 35, and about 3 GB of disk.
 
 ```bash
-git clone https://github.com/Dhanrajs-Purament/bitchat-android.git
+git clone https://github.com/Dhanrajs-Purament/nyaya-ai.git
 cd bitchat-android
 echo "sdk.dir=$ANDROID_HOME" > local.properties
 

@@ -1,0 +1,8 @@
+Nyaya AI 1.8.0
+
+- Gemma 4 on-device AI (E2B and E4B) via Google's LiteRT-LM. No account or token needed.
+- Both income-tax regimes bundled and clearly labelled: the 1961 Act as repealed, and the Income-tax Act 2025 in force from 1 April 2026.
+- New guide for online harassment, leaked photos and cyber crime.
+- Better search across the legal library (BM25 ranking).
+- One app, one icon: encrypted mesh chat now opens from the home screen.
+- New app icon, and complete privacy policy, terms and licence documentation.
