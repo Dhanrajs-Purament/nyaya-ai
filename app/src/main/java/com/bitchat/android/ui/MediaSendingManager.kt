@@ -5,12 +5,21 @@ import com.bitchat.android.mesh.MeshService
 import com.bitchat.android.model.BitchatFilePacket
 import com.bitchat.android.model.BitchatMessage
 import com.bitchat.android.model.BitchatMessageType
+import com.bitchat.android.nyaya.transfer.MeshTransferLimits
 import java.util.Date
 import java.security.MessageDigest
 
 /**
  * Handles media file sending operations (voice notes, images, generic files)
  * Separated from ChatViewModel for better separation of concerns
+ *
+ * Size limits: the BLE mesh receiver (FragmentManager) hard-caps reassembly, so
+ * the old 50 MB sender-side check could accept files that were physically
+ * undeliverable — and then failed silently, leaving the user staring at a stuck
+ * progress indicator. All send paths now validate against MeshTransferLimits
+ * (derived from the real receiver caps) and, on rejection, post a visible
+ * system message into the same conversation explaining what happened and what
+ * the user can do. Oversized images are re-compressed to fit instead of failing.
  */
 class MediaSendingManager(
     private val state: ChatState,
@@ -23,7 +32,6 @@ class MediaSendingManager(
         get() = getMeshService()
     companion object {
         private const val TAG = "MediaSendingManager"
-        private const val MAX_FILE_SIZE = com.bitchat.android.util.AppConstants.Media.MAX_FILE_SIZE_BYTES // 50MB limit
     }
 
     // Track in-flight transfer progress: transferId -> messageId and reverse
@@ -41,9 +49,15 @@ class MediaSendingManager(
                 return
             }
             Log.d(TAG, "📁 File exists: size=${file.length()} bytes, name=${file.name}")
-            
-            if (file.length() > MAX_FILE_SIZE) {
-                Log.e(TAG, "❌ File too large: ${file.length()} bytes (max: $MAX_FILE_SIZE)")
+
+            val maxBytes = MeshTransferLimits.maxFileContentBytes(file.name, "audio/mp4")
+            if (file.length() > maxBytes) {
+                Log.e(TAG, "❌ Voice note too large for mesh delivery: ${file.length()} bytes (max: $maxBytes)")
+                notifyFileTooLarge(
+                    toPeerIDOrNull, channelOrNull,
+                    file.name, file.length(), maxBytes,
+                    "try recording a shorter voice note"
+                )
                 return
             }
 
@@ -70,16 +84,31 @@ class MediaSendingManager(
     fun sendImageNote(toPeerIDOrNull: String?, channelOrNull: String?, filePath: String) {
         try {
             Log.d(TAG, "🔄 Starting image send: $filePath")
-            val file = java.io.File(filePath)
+            var file = java.io.File(filePath)
             if (!file.exists()) {
                 Log.e(TAG, "❌ File does not exist: $filePath")
                 return
             }
             Log.d(TAG, "📁 File exists: size=${file.length()} bytes, name=${file.name}")
-            
-            if (file.length() > MAX_FILE_SIZE) {
-                Log.e(TAG, "❌ File too large: ${file.length()} bytes (max: $MAX_FILE_SIZE)")
-                return
+
+            var sendPath = filePath
+            val maxBytes = MeshTransferLimits.maxFileContentBytes(file.name, "image/jpeg")
+            if (file.length() > maxBytes) {
+                // Root-cause behavior for images: fit the payload to the pipe
+                // instead of failing. Re-compress until it is deliverable.
+                Log.w(TAG, "⚠️ Image exceeds mesh delivery limit (${file.length()} > $maxBytes); re-compressing")
+                val fitted = recompressImageToFit(filePath, maxBytes)
+                if (fitted == null) {
+                    Log.e(TAG, "❌ Image could not be compressed under $maxBytes bytes")
+                    notifyFileTooLarge(
+                        toPeerIDOrNull, channelOrNull,
+                        file.name, file.length(), maxBytes,
+                        "try a smaller image"
+                    )
+                    return
+                }
+                sendPath = fitted
+                file = java.io.File(fitted)
             }
 
             val filePacket = BitchatFilePacket(
@@ -90,9 +119,9 @@ class MediaSendingManager(
             )
 
             if (toPeerIDOrNull != null) {
-                sendPrivateFile(toPeerIDOrNull, filePacket, filePath, BitchatMessageType.Image)
+                sendPrivateFile(toPeerIDOrNull, filePacket, sendPath, BitchatMessageType.Image)
             } else {
-                sendPublicFile(channelOrNull, filePacket, filePath, BitchatMessageType.Image)
+                sendPublicFile(channelOrNull, filePacket, sendPath, BitchatMessageType.Image)
             }
         } catch (e: Exception) {
             Log.e(TAG, "❌ CRITICAL: Image send failed completely", e)
@@ -114,11 +143,6 @@ class MediaSendingManager(
                 return
             }
             Log.d(TAG, "📁 File exists: size=${file.length()} bytes, name=${file.name}")
-            
-            if (file.length() > MAX_FILE_SIZE) {
-                Log.e(TAG, "❌ File too large: ${file.length()} bytes (max: $MAX_FILE_SIZE)")
-                return
-            }
 
             // Use the real MIME type based on extension; fallback to octet-stream
             val mimeType = try { 
@@ -137,6 +161,17 @@ class MediaSendingManager(
                 stripped + ext
             }
             Log.d(TAG, "📝 Original filename: $originalName")
+
+            val maxBytes = MeshTransferLimits.maxFileContentBytes(originalName, mimeType)
+            if (file.length() > maxBytes) {
+                Log.e(TAG, "❌ File too large for mesh delivery: ${file.length()} bytes (max: $maxBytes)")
+                notifyFileTooLarge(
+                    toPeerIDOrNull, channelOrNull,
+                    originalName, file.length(), maxBytes,
+                    "try a smaller file, or compress it before sending"
+                )
+                return
+            }
 
             val filePacket = BitchatFilePacket(
                 fileName = originalName,
@@ -162,6 +197,79 @@ class MediaSendingManager(
             Log.e(TAG, "❌ File path: $filePath")
             Log.e(TAG, "❌ Error details: ${e.message}")
             Log.e(TAG, "❌ Error type: ${e.javaClass.simpleName}")
+        }
+    }
+
+    /**
+     * Tell the user — in the conversation where they tried to send — that the
+     * file cannot be delivered over the mesh and why. Replaces the previous
+     * behavior of silently logging and returning.
+     */
+    private fun notifyFileTooLarge(
+        toPeerIDOrNull: String?,
+        channelOrNull: String?,
+        fileName: String,
+        fileSize: Long,
+        maxBytes: Long,
+        hint: String
+    ) {
+        val text = "cannot send '$fileName' (${MeshTransferLimits.formatBytes(fileSize)}): " +
+            "the Bluetooth mesh can deliver files up to ${MeshTransferLimits.formatBytes(maxBytes)} — $hint"
+        val sys = BitchatMessage(
+            sender = "system",
+            content = text,
+            timestamp = Date(),
+            isRelay = false,
+            isPrivate = toPeerIDOrNull != null
+        )
+        when {
+            toPeerIDOrNull != null -> messageManager.addPrivateMessage(toPeerIDOrNull, sys)
+            !channelOrNull.isNullOrBlank() -> messageManager.addChannelMessage(channelOrNull, sys)
+            else -> messageManager.addMessage(sys)
+        }
+    }
+
+    /**
+     * Progressively re-compress an image (descending dimension/quality ladder)
+     * until it fits under maxBytes. Returns the path of the fitted JPEG, or
+     * null if even the smallest variant is too large. The input file is
+     * expected to be orientation-corrected already (ImageUtils does that when
+     * copying the picked image into app storage).
+     */
+    private fun recompressImageToFit(filePath: String, maxBytes: Long): String? {
+        return try {
+            val src = android.graphics.BitmapFactory.decodeFile(filePath) ?: return null
+            val dir = java.io.File(filePath).parentFile ?: return null
+            val attempts = listOf(512 to 70, 448 to 60, 384 to 50, 320 to 40, 256 to 35)
+            try {
+                for ((maxDim, quality) in attempts) {
+                    val scale = (maxOf(src.width, src.height).toFloat() / maxDim.toFloat()).coerceAtLeast(1f)
+                    val w = (src.width / scale).toInt().coerceAtLeast(1)
+                    val h = (src.height / scale).toInt().coerceAtLeast(1)
+                    val scaled = if (scale > 1f) android.graphics.Bitmap.createScaledBitmap(src, w, h, true) else src
+                    val out = java.io.File(dir, "fit_${System.currentTimeMillis()}_$maxDim.jpg")
+                    try {
+                        java.io.FileOutputStream(out).use { fos ->
+                            scaled.compress(android.graphics.Bitmap.CompressFormat.JPEG, quality, fos)
+                        }
+                    } finally {
+                        if (scaled !== src) {
+                            try { scaled.recycle() } catch (_: Exception) {}
+                        }
+                    }
+                    if (out.length() in 1..maxBytes) {
+                        Log.d(TAG, "✅ Re-compressed image to ${out.length()} bytes (maxDim=$maxDim, q=$quality)")
+                        return out.absolutePath
+                    }
+                    out.delete()
+                }
+            } finally {
+                try { src.recycle() } catch (_: Exception) {}
+            }
+            null
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Image re-compression failed: ${e.message}")
+            null
         }
     }
 
