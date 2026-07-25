@@ -6,6 +6,7 @@ import com.bitchat.android.model.BitchatFilePacket
 import com.bitchat.android.model.BitchatMessage
 import com.bitchat.android.model.BitchatMessageType
 import com.bitchat.android.nyaya.transfer.MeshTransferLimits
+import com.bitchat.android.nyaya.transfer.bulk.BulkFrames
 import java.util.Date
 import java.security.MessageDigest
 
@@ -20,6 +21,12 @@ import java.security.MessageDigest
  * (derived from the real receiver caps) and, on rejection, post a visible
  * system message into the same conversation explaining what happened and what
  * the user can do. Oversized images are re-compressed to fit instead of failing.
+ *
+ * Fast path: when the recipient is reachable over the Wi-Fi Aware link with an
+ * established Noise session, private files that exceed the mesh limit are sent
+ * over the end-to-end encrypted bulk channel instead (up to BulkFrames
+ * MAX_FILE_BYTES), preserving original quality. Delivery is marked complete
+ * only after the receiver verifies the file's SHA-256.
  */
 class MediaSendingManager(
     private val state: ChatState,
@@ -52,6 +59,11 @@ class MediaSendingManager(
 
             val maxBytes = MeshTransferLimits.maxFileContentBytes(file.name, "audio/mp4")
             if (file.length() > maxBytes) {
+                if (toPeerIDOrNull != null &&
+                    trySendViaBulk(toPeerIDOrNull, file, file.name, "audio/mp4", BitchatMessageType.Audio)
+                ) {
+                    return
+                }
                 Log.e(TAG, "❌ Voice note too large for mesh delivery: ${file.length()} bytes (max: $maxBytes)")
                 notifyFileTooLarge(
                     toPeerIDOrNull, channelOrNull,
@@ -94,8 +106,15 @@ class MediaSendingManager(
             var sendPath = filePath
             val maxBytes = MeshTransferLimits.maxFileContentBytes(file.name, "image/jpeg")
             if (file.length() > maxBytes) {
-                // Root-cause behavior for images: fit the payload to the pipe
-                // instead of failing. Re-compress until it is deliverable.
+                // Fast path first: over the Wi-Fi link the original image fits
+                // without any quality loss.
+                if (toPeerIDOrNull != null &&
+                    trySendViaBulk(toPeerIDOrNull, file, file.name, "image/jpeg", BitchatMessageType.Image)
+                ) {
+                    return
+                }
+                // Root-cause behavior for images on the mesh: fit the payload to
+                // the pipe instead of failing. Re-compress until it is deliverable.
                 Log.w(TAG, "⚠️ Image exceeds mesh delivery limit (${file.length()} > $maxBytes); re-compressing")
                 val fitted = recompressImageToFit(filePath, maxBytes)
                 if (fitted == null) {
@@ -162,8 +181,19 @@ class MediaSendingManager(
             }
             Log.d(TAG, "📝 Original filename: $originalName")
 
+            val messageType = when {
+                mimeType.lowercase().startsWith("image/") -> BitchatMessageType.Image
+                mimeType.lowercase().startsWith("audio/") -> BitchatMessageType.Audio
+                else -> BitchatMessageType.File
+            }
+
             val maxBytes = MeshTransferLimits.maxFileContentBytes(originalName, mimeType)
             if (file.length() > maxBytes) {
+                if (toPeerIDOrNull != null &&
+                    trySendViaBulk(toPeerIDOrNull, file, originalName, mimeType, messageType)
+                ) {
+                    return
+                }
                 Log.e(TAG, "❌ File too large for mesh delivery: ${file.length()} bytes (max: $maxBytes)")
                 notifyFileTooLarge(
                     toPeerIDOrNull, channelOrNull,
@@ -181,12 +211,6 @@ class MediaSendingManager(
             )
             Log.d(TAG, "📦 Created file packet successfully")
 
-            val messageType = when {
-                mimeType.lowercase().startsWith("image/") -> BitchatMessageType.Image
-                mimeType.lowercase().startsWith("audio/") -> BitchatMessageType.Audio
-                else -> BitchatMessageType.File
-            }
-
             if (toPeerIDOrNull != null) {
                 sendPrivateFile(toPeerIDOrNull, filePacket, filePath, messageType)
             } else {
@@ -201,9 +225,67 @@ class MediaSendingManager(
     }
 
     /**
+     * Attempt the Nyaya fast path: a direct, end-to-end encrypted bulk
+     * transfer over the Wi-Fi Aware socket. Returns true when the send was
+     * handled (started, or rejected with a visible explanation); false when
+     * the fast path is unavailable and the caller should fall back to the
+     * mesh behavior (re-compress / visible too-large message).
+     */
+    private fun trySendViaBulk(
+        toPeerID: String,
+        file: java.io.File,
+        fileName: String,
+        mimeType: String,
+        messageType: BitchatMessageType
+    ): Boolean {
+        return try {
+            if (!meshService.canSendFileBulk(toPeerID)) return false
+            if (file.length() > BulkFrames.MAX_FILE_BYTES) {
+                notifyFileTooLarge(
+                    toPeerID, null,
+                    fileName, file.length(), BulkFrames.MAX_FILE_BYTES,
+                    "try a smaller file",
+                    pathLabel = "the fast Wi-Fi path",
+                    suggestFastPath = false
+                )
+                return true
+            }
+            val transferId = meshService.sendFileBulk(toPeerID, file.absolutePath, fileName, mimeType)
+                ?: return false
+            Log.d(TAG, "🚀 Sending via Wi-Fi bulk path: ${file.length()} bytes, transferId=${transferId.take(16)}…")
+            val msg = BitchatMessage(
+                id = java.util.UUID.randomUUID().toString().uppercase(),
+                sender = state.getNicknameValue() ?: "me",
+                content = file.absolutePath,
+                type = messageType,
+                timestamp = Date(),
+                isRelay = false,
+                isPrivate = true,
+                recipientNickname = try { meshService.getPeerNicknames()[toPeerID] } catch (_: Exception) { null },
+                senderPeerID = meshService.myPeerID
+            )
+            messageManager.addPrivateMessage(toPeerID, msg)
+            synchronized(transferMessageMap) {
+                transferMessageMap[transferId] = msg.id
+                messageTransferMap[msg.id] = transferId
+            }
+            // Seed progress so delivery icons render immediately; real progress
+            // arrives from the receiver's acks via TransferProgressManager.
+            messageManager.updateMessageDeliveryStatus(
+                msg.id,
+                com.bitchat.android.model.DeliveryStatus.PartiallyDelivered(0, 100)
+            )
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Bulk send attempt failed, falling back: ${e.message}")
+            false
+        }
+    }
+
+    /**
      * Tell the user — in the conversation where they tried to send — that the
-     * file cannot be delivered over the mesh and why. Replaces the previous
-     * behavior of silently logging and returning.
+     * file cannot be delivered and why. Replaces the previous behavior of
+     * silently logging and returning.
      */
     private fun notifyFileTooLarge(
         toPeerIDOrNull: String?,
@@ -211,10 +293,17 @@ class MediaSendingManager(
         fileName: String,
         fileSize: Long,
         maxBytes: Long,
-        hint: String
+        hint: String,
+        pathLabel: String = "the Bluetooth mesh",
+        suggestFastPath: Boolean = true
     ) {
+        val fastPathHint = if (suggestFastPath && toPeerIDOrNull != null) {
+            " (bigger files can travel over the fast Wi-Fi path — keep both phones nearby with Wi-Fi turned on)"
+        } else {
+            ""
+        }
         val text = "cannot send '$fileName' (${MeshTransferLimits.formatBytes(fileSize)}): " +
-            "the Bluetooth mesh can deliver files up to ${MeshTransferLimits.formatBytes(maxBytes)} — $hint"
+            "$pathLabel can deliver files up to ${MeshTransferLimits.formatBytes(maxBytes)} — $hint$fastPathHint"
         val sys = BitchatMessage(
             sender = "system",
             content = text,
