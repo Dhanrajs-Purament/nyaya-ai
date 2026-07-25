@@ -1,15 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nyaya AI Lawyer — adaptive launcher icon, foreground layer.
+
+  The mark has to say three things at 48dp, in one read:
+
+    * shield        -> end-to-end encryption and privacy (the bitchat heritage)
+    * scales        -> Indian law, the reason the app exists
+    * beam of nodes -> the peer-to-peer mesh and the on-device AI: the scales'
+                       beam is literally a network graph, so "law" and
+                       "encrypted AI network" are the same shape rather than two
+                       icons crammed together
+
+  All artwork stays inside the central 72x72 safe zone of the 108x108 adaptive
+  viewport, so no launcher mask can crop it.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:viewportWidth="135.4667"
-    android:viewportHeight="135.4667"
     android:width="108dp"
-    android:height="108dp">
-    <group
-        android:scaleX="0.2645833"
-        android:scaleY="0.2645833"
-        android:translateX="-1.0877"
-        android:translateY="47.11238">
-        <path
-            android:pathData="M187.45493 73.477844q9.17966 2.148433 14.38798 8.333313 5.20832 6.18488 5.20832 14.713504 0 12.499969 -9.11456 19.921819 -9.04945 7.42186 -21.80984 7.42186h-26.1067V32.006596h25.45566q13.28122 0 20.76818 5.85936 7.48696 5.794256 7.48696 16.406208 0 6.5104 -4.36197 11.588512 -4.29686 5.078112 -11.91403 7.356752zM160.69718 68.52994h12.49997q19.59631 0 19.59631 -13.99736 0 -6.380192 -4.8177 -9.7656 -4.8177 -3.450512 -14.12757 -3.450512h-13.15101zm0 46.02853h12.10935q10.61195 0 16.79683 -4.8177 6.24998 -4.81769 6.24998 -13.216109 0 -8.919248 -6.11977 -13.802048 -6.11978 -4.8828 -17.70829 -4.8828h-11.3281zm116.14554 9.30987h-41.73166v-9.30987h15.82027V41.316468h-15.82027v-9.309872h41.73166v9.309872h-15.23433v73.242002h15.23433zM370.20186 40.665428H341.88162V123.86834H331.26967V40.665428h-28.45045v-8.658832h67.38264z"
-            android:fillColor="#FFFFFF" />
-    </group>
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Shield body -->
+    <path
+        android:pathData="M54,20 L83,29.5 L83,52.5 C83,70.5 70.5,82.5 54,89 C37.5,82.5 25,70.5 25,52.5 L25,29.5 Z"
+        android:fillColor="#26FFFFFF"
+        android:strokeColor="#8CFFFFFF"
+        android:strokeWidth="2.2" />
+
+    <!-- Scales: central post, base and foot -->
+    <path android:pathData="M52.6,36 h2.8 v38 h-2.8 z" android:fillColor="#FFFFFFFF" />
+    <path android:pathData="M45,74 h18 v3.2 h-18 z" android:fillColor="#FFFFFFFF" />
+    <path android:pathData="M41.5,77.2 h25 v3.4 h-25 z" android:fillColor="#FFFFFFFF" />
+
+    <!-- Beam of the scales, doubling as a mesh link -->
+    <path android:pathData="M33,44 h42 v2.8 h-42 z" android:fillColor="#FFFFFFFF" />
+
+    <!-- Hangers -->
+    <path android:pathData="M33.4,46.8 h1.6 v6 h-1.6 z" android:fillColor="#D9FFFFFF" />
+    <path android:pathData="M73,46.8 h1.6 v6 h-1.6 z" android:fillColor="#D9FFFFFF" />
+
+    <!-- Pans -->
+    <path
+        android:pathData="M26.5,52.8 C26.5,60.2 32,64.4 34.2,64.4 C36.4,64.4 41.9,60.2 41.9,52.8 Z"
+        android:fillColor="#FFFFFFFF" />
+    <path
+        android:pathData="M66.1,52.8 C66.1,60.2 71.6,64.4 73.8,64.4 C76,64.4 81.5,60.2 81.5,52.8 Z"
+        android:fillColor="#FFFFFFFF" />
+
+    <!-- Mesh nodes riding the beam: the encrypted peer-to-peer fabric -->
+    <path
+        android:pathData="M34.2,45.4 m-4.2,0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0 z"
+        android:fillColor="#FFF7C544" />
+    <path
+        android:pathData="M73.8,45.4 m-4.2,0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0 z"
+        android:fillColor="#FFF7C544" />
+
+    <!-- AI node at the apex, linked into the beam: inference happening on-device -->
+    <path
+        android:pathData="M54,29.5 L59.5,33.6 L54,37.7 L48.5,33.6 Z"
+        android:fillColor="#FFF7C544" />
+    <path
+        android:pathData="M54,37.7 L54,44"
+        android:strokeColor="#BFF7C544"
+        android:strokeWidth="1.8" />
+    <path
+        android:pathData="M48.5,33.6 L34.2,45.4"
+        android:strokeColor="#73F7C544"
+        android:strokeWidth="1.5" />
+    <path
+        android:pathData="M59.5,33.6 L73.8,45.4"
+        android:strokeColor="#73F7C544"
+        android:strokeWidth="1.5" />
+
+    <!-- Fulcrum -->
+    <path
+        android:pathData="M54,45.4 m-3.2,0 a3.2,3.2 0 1,0 6.4,0 a3.2,3.2 0 1,0 -6.4,0 z"
+        android:fillColor="#FFFFFFFF" />
 </vector>

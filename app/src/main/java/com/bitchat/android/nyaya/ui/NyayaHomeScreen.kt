@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -136,7 +136,7 @@ private fun ModelSetupCard(state: NyayaViewModel.UiState, onDownloadModel: () ->
         if (progress != null) {
             if (progress >= 0f) {
                 LinearProgressIndicator(
-                    progress = progress.coerceIn(0f, 1f),
+                    progress = { progress.coerceIn(0f, 1f) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(6.dp))
@@ -213,7 +213,7 @@ fun NyayaInputBar(
             enabled = enabled && text.isNotBlank()
         ) {
             Icon(
-                Icons.Filled.Send,
+                Icons.AutoMirrored.Filled.Send,
                 contentDescription = "Send",
                 tint = if (enabled && text.isNotBlank()) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurfaceVariant

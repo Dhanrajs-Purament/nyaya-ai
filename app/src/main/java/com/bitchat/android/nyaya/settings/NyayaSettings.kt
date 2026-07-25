@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.bitchat.android.nyaya.ai.NyayaModel
+import com.bitchat.android.nyaya.ai.NyayaModelCatalog
 
 /**
  * Keystore-encrypted settings for the Nyaya module. BYOK API keys and the
@@ -15,10 +17,12 @@ class NyayaSettings(context: Context) {
         const val MODE_ON_DEVICE = "on_device"
         const val MODE_CLOUD = "cloud"
 
-        // Small, public LiteRT Gemma bundle that fits low-end Indian phones.
-        // Users can point to a bigger Gemma bundle (E2B/E4B) in Settings.
-        const val DEFAULT_MODEL_URL =
-            "https://huggingface.co/litert-community/Gemma3-1B-IT/resolve/main/Gemma3-1B-IT_multi-prefill-seq_q8_ekv2048.task"
+        /**
+         * Gemma 4 E2B as a LiteRT-LM bundle: ungated and Apache-2.0, so offline
+         * mode works without a Hugging Face account. Users can point this at a
+         * bigger Gemma 4 bundle (E4B) in Settings.
+         */
+        val DEFAULT_MODEL_URL: String get() = NyayaModelCatalog.default.url
     }
 
     private val prefs: SharedPreferences = run {
@@ -62,7 +66,24 @@ class NyayaSettings(context: Context) {
         get() = prefs.getBoolean("voice_replies", true)
         set(value) = prefs.edit().putBoolean("voice_replies", value).apply()
 
+    /**
+     * Try the GPU backend before CPU when loading the on-device model. GPU is
+     * both faster and lighter on RAM for Gemma 4 bundles; the engine falls back
+     * to CPU automatically when a device cannot initialise it.
+     */
+    var preferGpu: Boolean
+        get() = prefs.getBoolean("prefer_gpu", true)
+        set(value) = prefs.edit().putBoolean("prefer_gpu", value).apply()
+
     /** Local file name derived from the configured model URL. */
     val modelFileName: String
-        get() = modelUrl.substringAfterLast('/').substringBefore('?').ifBlank { "nyaya-model.task" }
+        get() = NyayaModelCatalog.fileNameForUrl(modelUrl)
+
+    /** Catalog entry for the configured URL, or null for a custom URL. */
+    val selectedModel: NyayaModel?
+        get() = NyayaModelCatalog.byUrl(modelUrl)
+
+    /** Exact expected download size, when the configured model is known. */
+    val modelExpectedBytes: Long?
+        get() = NyayaModelCatalog.expectedBytesForUrl(modelUrl)
 }

@@ -27,6 +27,20 @@
 -dontwarn info.guardianproject.arti.**
 -dontwarn org.torproject.arti.**
 
+# LiteRT-LM — on-device Gemma 4 inference.
+# The native library (liblitertlm_jni.so) resolves these Kotlin classes, their
+# constructors and their callback methods by name across the JNI boundary, and
+# the runtime additionally uses kotlin-reflect. If R8 renames or strips any of
+# it, the offline AI engine fails at load time with a NoSuchMethod/UnsatisfiedLink
+# error that only shows up in a release build.
+-keep class com.google.ai.edge.litertlm.** { *; }
+-keepclassmembers class com.google.ai.edge.litertlm.** {
+    native <methods>;
+    <init>(...);
+}
+-dontwarn com.google.ai.edge.litertlm.**
+-dontwarn kotlin.reflect.**
+
 # Fix for AbstractMethodError on API < 29 where LocationListener methods are abstract
 -keepclassmembers class * implements android.location.LocationListener {
     public <methods>;

@@ -1,308 +1,225 @@
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/188c42f8-d249-4a72-b27a-e2b4f10a00a8" alt="Bitchat Android Logo" width="480">
-</p>
+<div align="center">
 
-> [!WARNING]
-> This software has not received external security review and may contain vulnerabilities and may not necessarily meet its stated security goals. Do not use it for sensitive use cases, and do not rely on its security until it has been reviewed. Work in progress.
+<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" width="120" alt="Nyaya AI Lawyer icon" />
 
-# bitchat for Android
+# Nyaya AI Lawyer
 
-A secure, decentralized, peer-to-peer messaging app that works over Bluetooth mesh networks. No internet required for mesh chats, no servers, no phone numbers - just pure encrypted communication. Bitchat also supports geohash channels, which use an internet connection to connect you with others in your geographic area.
+**Free legal help for India, on your phone, with no internet and no account.**
 
-This is the **Android port** of the original [bitchat iOS app](https://github.com/jackjackbits/bitchat), maintaining 100% protocol compatibility for cross-platform communication.
+Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline · encrypted Bluetooth mesh messaging
 
-## Install bitchat
+</div>
 
-You can download the latest version of bitchat for Android from the [GitHub Releases page](https://github.com/permissionlesstech/bitchat-android/releases).
+---
 
-Or you can:
+## What this is
 
-[<img alt="Get it on Google Play" height="60" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/>](https://play.google.com/store/apps/details?id=com.bitchat.droid)
+Nyaya AI Lawyer answers legal questions for people in India who cannot afford a lawyer. It does two things that ordinary chat apps cannot:
 
-**Instructions:**
+**It works with the internet switched off.** A Gemma 4 model runs on the phone itself and the complete text of 25 Indian acts is bundled inside the app. Ask "the police refuse to file my FIR, what are my rights?" in airplane mode and you get an answer grounded in the actual words of BNSS Section 173, together with the free-legal-aid helpline.
 
-1.  **Download the APK:** On your Android device, navigate to the link above and download the latest `.apk` file. Open it.
-2.  **Allow Unknown Sources:** On some devices, before you can install the APK, you may need to enable "Install from unknown sources" in your device's settings. This is typically found under **Settings > Security** or **Settings > Apps & notifications > Special app access**.
-3.  **Install:** Open the downloaded `.apk` file to begin the installation.
+**Nothing you type ever leaves your phone.** There is no account, no server, and no telemetry. That matters for the people this is built for — someone asking about domestic violence, a leaked photo, or a police case does not want that question in anyone's logs.
 
-## License
+It is built on top of [bitchat](https://github.com/permissionlesstech/bitchat-android), so it also carries bitchat's encrypted Bluetooth-mesh messaging: phones talk to each other directly, with no cell tower and no internet, using the Noise protocol.
 
-This project is released into the public domain. See the [LICENSE](LICENSE.md) file for details.
+> **This app gives legal information, not legal advice.** It is not a lawyer and does not create a lawyer–client relationship. For anything serious — arrest, court dates, a live FIR — get a real advocate. Free legal aid is a right in India: call **NALSA on 15100**. In an emergency call **112**.
 
-## Features
+---
 
-- **✅ Cross-Platform Compatible**: Full protocol compatibility with iOS bitchat
-- **✅ Decentralized Mesh Network**: Automatic peer discovery and multi-hop message relay over Bluetooth LE
-- **✅ End-to-End Encryption**: X25519 key exchange + AES-256-GCM for private messages
-- **✅ Channel-Based Chats**: Topic-based group messaging with optional password protection
-- **✅ Store & Forward**: Messages cached for offline peers and delivered when they reconnect
-- **✅ Privacy First**: No accounts, no phone numbers, no persistent identifiers
-- **✅ IRC-Style Commands**: Familiar `/join`, `/msg`, `/who` style interface
-- **✅ Message Retention**: Optional channel-wide message saving controlled by channel owners
-- **✅ Emergency Wipe**: Triple-tap logo to instantly clear all data
-- **✅ Modern Android UI**: Jetpack Compose with Material Design 3
-- **✅ Dark/Light Themes**: Terminal-inspired aesthetic matching iOS version
-- **✅ Battery Optimization**: Adaptive scanning and power management
+## The brand mark
 
-## Android Setup
+<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="88" align="left" hspace="16" vspace="4" alt="icon" />
 
-### Prerequisites
+The icon is one shape carrying all three halves of the product. A **shield** for encryption and privacy, the bitchat heritage. **Scales of justice** for Indian law. And the beam of those scales is a **network graph** — two amber mesh nodes with an AI node at the apex feeding into the fulcrum — so the legal symbol and the encrypted-AI-network symbol are the same object rather than two logos pushed together. Indigo shading into teal: institutional trust moving into on-device intelligence.
 
-- **Android Studio**: Arctic Fox (2020.3.1) or newer
-- **Android SDK**: API level 26 (Android 8.0) or higher
-- **Kotlin**: 1.8.0 or newer
-- **Gradle**: 7.0 or newer
+<br clear="left" />
 
-### Build Instructions
+---
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/permissionlesstech/bitchat-android.git
-   cd bitchat-android
-   ```
+## Two AI engines
 
-2. **Open in Android Studio:**
-   ```bash
-   # Open Android Studio and select "Open an Existing Project"
-   # Navigate to the bitchat-android directory
-   ```
+| | On-device (default) | Cloud (bring your own key) |
+|---|---|---|
+| Privacy | Nothing leaves the phone | Sent to the endpoint you choose |
+| Works offline | Yes | No |
+| Cost | Free | Your own API billing |
+| Setup | One 2.4 GB download | Paste a key |
 
-3. **Build the project:**
-   ```bash
-   ./gradlew build
-   ```
+### On-device: Gemma 4 via LiteRT-LM
 
-4. **Install on device:**
-   ```bash
-   ./gradlew installDebug
-   ```
+| Model | Download | RAM | Notes |
+|---|---|---|---|
+| **Gemma 4 E2B** (default) | 2.4 GB | 4 GB+ | Recommended. Good answers on most mid-range phones. |
+| **Gemma 4 E4B** | 3.4 GB | 6 GB+ | Stronger multi-step reasoning, needs a better phone. |
 
-### Development Build
+Both are the Apache-2.0 `.litertlm` builds from [litert-community](https://huggingface.co/litert-community), run through Google's **LiteRT-LM** runtime. They are **not licence-gated**, so no Hugging Face account or token is needed. The runtime applies each model's own chat template, tries the **GPU** first (faster and lighter on RAM) and falls back to CPU automatically.
 
-For development builds with debugging enabled:
+On-device AI needs a **64-bit** phone (`arm64-v8a`). On 32-bit devices the mesh chat still works and you can use your own API key.
+
+### Cloud: any OpenAI-compatible endpoint
+
+OpenAI, Groq, OpenRouter, a self-hosted vLLM or Ollama — anything that speaks `/chat/completions`. Your key is stored in Android Keystore-encrypted preferences and is only ever sent to the endpoint you configured.
+
+---
+
+## The offline legal library
+
+**36 files, ~12 MB, bundled inside the APK.** No download, indexed at launch, searchable with the network off.
+
+**25 complete bare acts**, fetched from official Government of India sources (almost all from `indiacode.nic.in`), with the source URL recorded in every file:
+
+- **Criminal law** — Bharatiya Nyaya Sanhita 2023, Bharatiya Nagarik Suraksha Sanhita 2023, Bharatiya Sakshya Adhiniyam 2023
+- **Constitutional & legal aid** — Constitution of India, Legal Services Authorities Act 1987
+- **Civil** — Contract Act 1872, Specific Relief Act 1963, Transfer of Property Act 1882, Code of Civil Procedure 1908, Limitation Act 1963
+- **Family** — Hindu Marriage Act 1955, Hindu Succession Act 1956, Special Marriage Act 1954, Protection of Women from Domestic Violence Act 2005, Dowry Prohibition Act 1961
+- **Consumer & digital rights** — Consumer Protection Act 2019, Information Technology Act 2000, DPDP Act 2023, RTI Act 2005
+- **Corporate & tax** — Companies Act 2013, Insolvency and Bankruptcy Code 2016, CGST Act 2017, **Income-tax Act 1961**, **Income-tax Act 2025**
+- **Everyday** — Motor Vehicles Act 1988
+
+Plus **10 curated plain-language guides** that bridge everyday words to statute language — emergency helplines, police procedure and FIR, arrest rights, free legal aid, fundamental rights, consumer complaints, data protection, RTI, and online harassment / leaked photos / cyber crime.
+
+### Both income-tax regimes, clearly labelled
+
+India replaced the 1961 Act with the **Income-tax Act, 2025**, in force from **1 April 2026**. Both are bundled, because the old Act still governs every earlier year and any assessment, appeal or prosecution about those years. Each file opens with a status banner that the retriever surfaces alongside the law itself:
+
+- `31_full_income_tax_act_1961_OLD_repealed.md` — **OLD LAW, REPEALED.** Use only for assessment years up to 2025-26.
+- `34_full_income_tax_act_2025_NEW_in_force.md` — **NEW LAW, IN FORCE.** Cite this for current questions, and never carry a 1961 section number across, because the numbering differs.
+
+A test enforces those labels, so the app cannot ship with the two regimes confused.
+
+### How retrieval works
+
+Every `.md` file is split into heading-aligned passages and ranked with **Okapi BM25** (`k1=1.2`, `b=0.75`). Length normalisation matters here: the two income-tax acts alone are ~4.5 MB of the library, and without it they drowned out consumer and cyber questions. The top passages are injected into the model's prompt with an instruction to cite section numbers **only** from those extracts, which is what stops the model inventing sections.
+
+### Refreshing the library
 
 ```bash
-./gradlew assembleDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+pip install pypdf
+python3 tools/kb/fetch_full_kb.py           # all 25 acts
+python3 tools/kb/fetch_full_kb.py --only bns
 ```
 
-### Release Build
+The fetcher validates that every download is a real PDF before writing it, retries with backoff, and if a pinned India Code URL has rotted it re-discovers the current one by searching India Code by title. It exits non-zero if any act fails.
 
-For production releases:
+---
+
+## Install
+
+Grab the APK from [**Releases**](https://github.com/Dhanrajs-Purament/bitchat-android/releases) — take `app-arm64-v8a-release.apk` for any phone from the last several years, or `app-universal-release.apk` if unsure.
+
+Then: open **Nyaya AI Lawyer** → **Settings** → pick a model → **Download & load model** (use Wi-Fi) → ask your question. Or skip the download and paste your own API key.
+
+You will need to allow "install from unknown sources", since this is not on Play Store.
+
+---
+
+## Build from source
+
+Requires JDK 17+, Android SDK with platform 35 and build-tools 35, and about 3 GB of disk.
 
 ```bash
-./gradlew assembleRelease
+git clone https://github.com/Dhanrajs-Purament/bitchat-android.git
+cd bitchat-android
+echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+pip install pypdf && python3 tools/kb/fetch_full_kb.py   # populate the legal library
+
+./gradlew testDebugUnitTest      # 154 unit tests
+./gradlew assembleDebug          # debug APKs
+./gradlew assembleRelease        # release APKs (unsigned unless configured below)
 ```
 
-## Android-Specific Requirements
+### Signing a release
 
-### Permissions
+Create `keystore.properties` at the repository root — it is git-ignored, and the release build stays unsigned without it:
 
-The app requires the following permissions (automatically requested):
+```properties
+storeFile=/absolute/path/to/nyaya-release.jks
+storePassword=…
+keyAlias=nyaya
+keyPassword=…
+```
 
-- **Bluetooth**: Core BLE functionality
-- **Location**: Required for BLE scanning on Android
-- **Network**: Expand your mesh through public internet relays
-- **Notifications**: Message alerts and background updates
+### Regenerating the launcher icon
 
-### Hardware Requirements
+The vector drawables in `app/src/main/res/drawable/ic_launcher_*.xml` are the source of truth. To refresh the legacy density PNGs:
 
-- **Bluetooth LE (BLE)**: Required for mesh networking
-- **Android 8.0+**: API level 26 minimum
-- **RAM**: 2GB recommended for optimal performance
+```bash
+pip install pillow && python3 tools/branding/render_launcher_icons.py
+```
 
-## Usage
+### Building on an ARM64 Linux host
 
-### Basic Commands
+Google ships `aapt2` for Linux as x86-64 only, and Robolectric has no `linux-aarch64` native runtime. Both are handled: install `qemu-user-static` and export `QEMU_LD_PREFIX=/usr/x86_64-linux-gnu`, and the build automatically switches Robolectric to its legacy graphics/SQLite backends on aarch64 Linux only, leaving x86-64 CI on the native path.
 
-- `/j #channel` - Join or create a channel
-- `/m @name message` - Send a private message
-- `/w` - List online users
-- `/channels` - Show all discovered channels
-- `/block @name` - Block a peer from messaging you
-- `/block` - List all blocked peers
-- `/unblock @name` - Unblock a peer
-- `/clear` - Clear chat messages
-- `/pass [password]` - Set/change channel password (owner only)
-- `/transfer @name` - Transfer channel ownership
-- `/save` - Toggle message retention for channel (owner only)
+---
 
-### Getting Started
+## Architecture
 
-1. **Install the app** on your Android device (requires Android 8.0+)
-2. **Grant permissions** for Bluetooth and location when prompted
-3. **Launch bitchat** - it will auto-start mesh networking
-4. **Set your nickname** or use the auto-generated one
-5. **Connect automatically** to nearby iOS and Android bitchat users
-6. **Join a channel** with `/j #general` or start chatting in public
-7. **Messages relay** through the mesh network to reach distant peers
+```
+app/src/main/java/com/bitchat/android/nyaya/
+├── ai/
+│   ├── LegalKnowledgeBase.kt   BM25 retrieval over the bundled acts
+│   ├── OnDeviceLlmEngine.kt    Gemma 4 via LiteRT-LM, GPU→CPU fallback
+│   ├── CloudLlmEngine.kt       BYOK, any OpenAI-compatible endpoint
+│   ├── AiRouter.kt             picks the engine that is ready
+│   ├── NyayaModelCatalog.kt    the Gemma 4 models, sizes and magic bytes
+│   ├── ModelDownloadManager.kt resumable download + integrity verification
+│   └── LawyerSystemPrompt.kt   scope, honesty and safety-routing rules
+├── memory/ConversationMemory.kt  rolling "Case File" for long consultations
+├── settings/NyayaSettings.kt     Keystore-encrypted preferences
+├── ui/                            Compose screens: home, chat, voice, settings
+└── voice/VoiceManager.kt          speech in, speech out
+```
 
-### Android UI Features
+**Answering a question:** the question is tokenised → BM25 finds the most relevant passages across the bundled acts → those passages plus the guardrail system prompt plus the running Case File go to whichever engine is active → the reply is appended to memory, and older turns are compacted into the Case File so a long conversation never overflows the model's context.
 
-- **Jetpack Compose UI**: Modern Material Design 3 interface
-- **Dark/Light Themes**: Terminal-inspired aesthetic matching iOS
-- **Haptic Feedback**: Vibrations for interactions and notifications
-- **Adaptive Layout**: Optimized for various Android screen sizes
-- **Message Status**: Real-time delivery and read receipts
-- **RSSI Indicators**: Signal strength colors for each peer
+**Model download:** verified against the exact expected byte count and the `LITERTLM` file header before the partial file is promoted, so an interrupted 2.4 GB transfer can never masquerade as a working model. Interrupted downloads resume.
 
-### Channel Features
+---
 
-- **Password Protection**: Channel owners can set passwords with `/pass`
-- **Message Retention**: Owners can enable mandatory message saving with `/save`
-- **@ Mentions**: Use `@nickname` to mention users (with autocomplete)
-- **Ownership Transfer**: Pass control to trusted users with `/transfer`
+## Privacy
 
-## Security & Privacy
+- No account, no sign-up, no analytics, no crash reporting, no ads.
+- In on-device mode, questions and answers never leave the phone. There is no server to leak.
+- API keys and the optional Hugging Face token are held in Android Keystore-encrypted preferences.
+- Mesh messages are end-to-end encrypted with the Noise protocol.
+- The only network traffic the AI features ever make is the one-time model download, and whatever you explicitly send in BYOK cloud mode.
 
-### Encryption
-- **Private Messages**: X25519 key exchange + AES-256-GCM encryption
-- **Channel Messages**: Argon2id password derivation + AES-256-GCM
-- **Digital Signatures**: Ed25519 for message authenticity
-- **Forward Secrecy**: New key pairs generated each session
+See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 
-### Privacy Features
-- **No Registration**: No accounts, emails, or phone numbers required
-- **Ephemeral by Default**: Messages exist only in device memory
-- **Cover Traffic**: Random delays and dummy messages prevent traffic analysis
-- **Emergency Wipe**: Triple-tap logo to instantly clear all data
-- **Bundled Tor Support**: Built-in Tor network integration for enhanced privacy when internet connectivity is available
+---
 
-## Performance & Efficiency
+## Testing
 
-### Message Compression
-- **LZ4 Compression**: Automatic compression for messages >100 bytes
-- **30-70% bandwidth savings** on typical text messages
-- **Smart compression**: Skips already-compressed data
+154 unit tests, of which 36 cover the Nyaya module:
 
-### Battery Optimization
-- **Adaptive Power Modes**: Automatically adjusts based on battery level
-  - Performance mode: Full features when charging or >60% battery
-  - Balanced mode: Default operation (30-60% battery)
-  - Power saver: Reduced scanning when <30% battery
-  - Ultra-low power: Emergency mode when <10% battery
-- **Background efficiency**: Automatic power saving when app backgrounded
-- **Configurable scanning**: Duty cycle adapts to battery state
+```bash
+./gradlew testDebugUnitTest          # JVM + Robolectric
+./gradlew connectedDebugAndroidTest  # needs a device: AndroidKeyStore crypto
+```
 
-### Network Efficiency
-- **Optimized Bloom filters**: Faster duplicate detection with less memory
-- **Message aggregation**: Batches small messages to reduce transmissions
-- **Adaptive connection limits**: Adjusts peer connections based on power mode
+The Nyaya tests run against the **real bundled legal library**, not fixtures. They prove that an FIR-refusal question retrieves BNSS Section 173 with the Superintendent-of-Police and Magistrate remedies, that the NALSA 15100 helpline is reachable, that both income-tax regimes are labelled, that every act came from an official source, that a 30-turn conversation compacts without losing facts, and that no hard-coded Gemma chat-template markers ever creep back in.
 
-## Technical Architecture
+Keystore-backed crypto is tested under `src/androidTest`, because `AndroidKeyStore` does not exist on the JVM and Robolectric does not emulate it.
 
-### Binary Protocol
-bitchat uses an efficient binary protocol optimized for Bluetooth LE:
-- Compact packet format with 1-byte type field
-- TTL-based message routing (max 7 hops)
-- Automatic fragmentation for large messages
-- Message deduplication via unique IDs
+---
 
-### Mesh Networking
-- Each device acts as both client and peripheral
-- Automatic peer discovery and connection management
-- Store-and-forward for offline message delivery
-- Adaptive duty cycling for battery optimization
+## Honest status
 
-### Android-Specific Optimizations
-- **Coroutine Architecture**: Asynchronous operations for mesh networking
-- **Kotlin Coroutines**: Thread-safe concurrent mesh operations
-- **EncryptedSharedPreferences**: Secure storage for user settings
-- **Lifecycle-Aware**: Proper handling of Android app lifecycle
-- **Battery Optimization**: Foreground service and adaptive scanning
+Built, compiling and tested — **but not yet validated on a physical phone.** The build is clean, the release APK is signed, and the offline legal retrieval is covered by passing tests. What no test here can establish is **answer quality**: whether Gemma 4 E2B actually gives good, safe legal guidance on a real device. That needs a human reading real answers, and it is the next step.
 
-## Android Technical Architecture
+Known limitations:
 
-### Core Components
+- A tenancy question about a "security deposit" retrieves company law, because "securities" and "deposits" are strong company-law terms. Pinned by a test so it stays visible; needs phrase-level matching to fix.
+- The Income-tax Act 2025 is not published on `indiacode.nic.in` or any reachable `.gov.in` host, so it comes from PRS Legislative Research's copy of the text as passed by Lok Sabha. The file says so.
+- 2.4 GB is a heavy download for the users this is aimed at. There is no smaller Gemma 4.
+- The app installs two launcher entries, "Nyaya AI Lawyer" and "bitchat".
 
-1. **BitchatApplication.kt**: Application-level initialization and dependency injection
-2. **MainActivity.kt**: Main activity handling permissions and UI hosting
-3. **ChatViewModel.kt**: MVVM pattern managing app state and business logic
-4. **BluetoothMeshService.kt**: Core BLE mesh networking (central + peripheral roles)
-5. **EncryptionService.kt**: Cryptographic operations using BouncyCastle
-6. **BinaryProtocol.kt**: Binary packet encoding/decoding matching iOS format
-7. **ChatScreen.kt**: Jetpack Compose UI with Material Design 3
+---
 
-### Dependencies
+## Credits & licence
 
-- **Jetpack Compose**: Modern declarative UI
-- **BouncyCastle**: Cryptographic operations (X25519, Ed25519, AES-GCM)
-- **Nordic BLE Library**: Reliable Bluetooth LE operations
-- **Kotlin Coroutines**: Asynchronous programming
-- **LZ4**: Message compression (when enabled)
-- **EncryptedSharedPreferences**: Secure local storage
+Built on [bitchat-android](https://github.com/permissionlesstech/bitchat-android). On-device inference by [Google AI Edge LiteRT-LM](https://developers.google.com/edge/litert-lm/overview) with [Gemma 4](https://huggingface.co/google/gemma-4-E2B-it). Legal texts from [India Code](https://www.indiacode.nic.in/), the Government of India's official repository.
 
-### Binary Protocol Compatibility
-
-The Android implementation maintains 100% binary protocol compatibility with iOS:
-- **Header Format**: Identical 13-byte header structure
-- **Packet Types**: Same message types and routing logic
-- **Encryption**: Identical cryptographic algorithms and key exchange
-- **UUIDs**: Same Bluetooth service and characteristic identifiers
-- **Fragmentation**: Compatible message fragmentation for large content
-
-## Publishing to Google Play
-
-### Preparation
-
-1. **Update version information:**
-   ```kotlin
-   // In app/build.gradle.kts
-   defaultConfig {
-       versionCode = 2  // Increment for each release
-       versionName = "1.1.0"  // User-visible version
-   }
-   ```
-
-2. **Create a signed release build:**
-   ```bash
-   ./gradlew assembleRelease
-   ```
-
-3. **Generate app bundle (recommended for Play Store):**
-   ```bash
-   ./gradlew bundleRelease
-   ```
-
-### Play Store Requirements
-
-- **Target API**: Latest Android API (currently 34)
-- **Privacy Policy**: Required for apps requesting sensitive permissions
-- **App Permissions**: Justify Bluetooth and location usage
-- **Content Rating**: Complete questionnaire for age-appropriate content
-
-### Distribution
-
-- **Google Play Store**: Main distribution channel
-- **F-Droid**: For open-source distribution
-- **Direct APK**: For testing and development
-
-## Cross-Platform Communication
-
-This Android port enables seamless communication with the original iOS bitchat app:
-
-- **iPhone ↔ Android**: Full bidirectional messaging
-- **Mixed Groups**: iOS and Android users in same channels
-- **Feature Parity**: All commands and encryption work across platforms
-- **Protocol Sync**: Identical message format and routing behavior
-
-**iOS Version**: For iPhone/iPad users, get the original bitchat at [github.com/jackjackbits/bitchat](https://github.com/jackjackbits/bitchat)
-
-## Contributing
-
-Contributions are welcome! Key areas for enhancement:
-
-1. **Performance**: Battery optimization and connection reliability
-2. **UI/UX**: Additional Material Design 3 features
-3. **Security**: Enhanced cryptographic features
-4. **Testing**: Unit and integration test coverage
-5. **Documentation**: API documentation and development guides
-
-## Support & Issues
-
-- **Bug Reports**: [Create an issue](../../issues) with device info and logs
-- **Feature Requests**: [Start a discussion](https://github.com/orgs/permissionlesstech/discussions)
-- **Security Issues**: Email security concerns privately
-- **iOS Compatibility**: Cross-reference with [original iOS repo](https://github.com/jackjackbits/bitchat)
-
-For iOS-specific issues, please refer to the [original iOS bitchat repository](https://github.com/jackjackbits/bitchat).
+See [LICENSE.md](LICENSE.md). Gemma models are covered by their own terms; the `.litertlm` bundles used here are Apache-2.0.
