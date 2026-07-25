@@ -105,11 +105,27 @@ The fetcher validates that every download is a real PDF before writing it, retri
 
 ## Install
 
-Grab the APK from [**Releases**](https://github.com/Dhanrajs-Purament/bitchat-android/releases) — take `app-arm64-v8a-release.apk` for any phone from the last several years, or `app-universal-release.apk` if unsure.
+Go to [**Releases**](https://github.com/Dhanrajs-Purament/bitchat-android/releases) and download the file marked **RECOMMENDED**. If you are unsure, that is the one.
 
-Then: open **Nyaya AI Lawyer** → **Settings** → pick a model → **Download & load model** (use Wi-Fi) → ask your question. Or skip the download and paste your own API key.
+| File | Who it is for | Size |
+|---|---|---|
+| `…-1-RECOMMENDED-most-phones.apk` | **Start here.** Every Android phone sold in roughly the last eight years. | 39 MB |
+| `…-2-BACKUP-works-on-all-phones.apk` | Only if the recommended file refuses to install. Same app, contains every CPU type, so it is larger. | 93 MB |
+| `…-3-old-32-bit-phones.apk` | Very old budget phones. Mesh chat works; **offline AI does not run on 32-bit devices.** | 16 MB |
+| `…-4-emulator-and-ChromeOS-64-bit.apk` | Developers, and some ChromeOS devices. | 44 MB |
+| `…-5-emulator-32-bit.apk` | Developers only. | 21 MB |
 
-You will need to allow "install from unknown sources", since this is not on Play Store.
+All of them are the same app — they differ only in which CPU type they carry.
+
+Then: tap the downloaded file → allow **"install from unknown sources"** when Android asks (this app is not on Play Store) → open **Nyaya AI Lawyer** → **Settings** → pick a model → **Download & load model** over Wi-Fi → ask your question.
+
+Prefer not to download 2.4 GB? Skip the model and paste your own API key in Settings instead.
+
+Verify a download against `SHA256SUMS.txt` on the release page:
+
+```bash
+sha256sum -c SHA256SUMS.txt --ignore-missing
+```
 
 ---
 
@@ -138,6 +154,17 @@ storeFile=/absolute/path/to/nyaya-release.jks
 storePassword=…
 keyAlias=nyaya
 keyPassword=…
+```
+
+### Packaging a release
+
+Gradle names its outputs after the CPU architecture, which is meaningless to end
+users. This renames them to the self-explaining names used on the release page
+and writes checksums:
+
+```bash
+./gradlew assembleRelease
+tools/release/package_release.sh          # -> build/release-downloads/
 ```
 
 ### Regenerating the launcher icon
