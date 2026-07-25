@@ -34,7 +34,7 @@ These screenshots are reference designs from the Gemini app to inspire the Nyaya
 | Recent chats list | Saved conversations, searchable, plain-text rows | Encrypted on device; delete button always visible on each row |
 | Actions bottom sheet | `ui/components/NyayaActionsSheet.kt` | Only what this app can do — no image/video/music generation, plus the NALSA helpline |
 | Library screen | `ui/LegalLibraryScreen.kt` | Browses the 25 bundled Acts, guides first, repealed Acts badged |
-| Incognito / temporary chat | Incognito chat, shown in the top bar throughout | No server to withhold data from, so it means: never written to storage, absent from the list, dropped on leaving, excluded from the Case File |
+| Incognito / temporary chat | Incognito chat, shown in the top bar throughout | No server to withhold data from, so it means: never written to storage, absent from the list, excluded from the Case File, gone on starting a new chat or closing the app |
 
 Deliberately not copied: Google's four-colour palette, the "Pro" tier badge, notebooks, avatars, and the media-generation entries — none of which this app has or should imply it has.
 

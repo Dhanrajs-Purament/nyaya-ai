@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+## [1.9.1] - 2026-07-25
+
+### Fixed
+- **Leaf screens now return where you came from.** The legal library and settings
+  sent the user back to the home screen unconditionally, which stranded a
+  conversation in progress: it was still in memory but only reachable from the
+  drawer, and an incognito conversation is never listed there, so it became a
+  dead end. Entry into a leaf screen now records the previous screen.
+- **The system back gesture matches the on-screen Back button.** Back from the
+  library or settings finished the activity instead of returning, and back inside
+  an open Act left the reader entirely. Back now closes the drawer, then the open
+  document, then the leaf screen, in that order.
+
+### Changed
+- Documentation described incognito chats as "dropped from memory when you leave
+  it", which overstated the implementation: they are never written to storage and
+  exist only in memory, so they are gone when a new conversation starts or the app
+  closes. Corrected in README, PRIVACY_POLICY, CHANGELOG and the UI notes.
+
 ## [1.9.0] - 2026-07-25
 
 ### Added
@@ -12,8 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   Case File summary is saved with each conversation so reopening a long
   consultation does not lose the names, dates and FIR numbers already given.
 - **Incognito chat.** Nothing written to storage, no entry in the conversation
-  list, dropped from memory on leaving, and excluded from the Case File. Shown in
-  the top bar for the whole conversation.
+  list, excluded from the Case File, and gone once a new conversation is started
+  or the app is closed. Shown in the top bar for the whole conversation.
 - **Offline legal library.** Browse and read the full text of every bundled Act,
   guides first, with repealed Acts badged. Works before any model is downloaded.
 - **Navigation drawer** where Nyaya AI and Mesh chat are peer modes, with search

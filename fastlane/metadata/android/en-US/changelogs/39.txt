@@ -1,0 +1,8 @@
+Fixes to getting around the app.
+
+• Closing the legal library or settings now returns you to where you were,
+  instead of always going back to the start screen.
+• The phone's back gesture now works everywhere: it closes the menu, then a
+  document you are reading, then the screen — instead of leaving the app.
+
+All other features, including every encrypted mesh chat feature, are unchanged.

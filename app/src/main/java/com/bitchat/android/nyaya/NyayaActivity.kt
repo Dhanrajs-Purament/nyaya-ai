@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -120,10 +121,33 @@ private enum class NyayaScreen { HOME, CHAT, VOICE, LIBRARY, SETTINGS }
 private fun NyayaApp(vm: NyayaViewModel) {
     val state by vm.state.collectAsState()
     var screen by remember { mutableStateOf(NyayaScreen.HOME) }
+    /**
+     * Where to return to from a leaf screen.
+     *
+     * The library and settings used to send the user back to HOME unconditionally,
+     * which stranded a conversation in progress: it was still in memory but only
+     * reachable again from the drawer — and an incognito conversation is never
+     * listed there, so it became a dead end. One level is enough, because those
+     * two screens are leaves and cannot nest inside each other.
+     */
+    var returnTo by remember { mutableStateOf(NyayaScreen.HOME) }
     var showActions by remember { mutableStateOf(false) }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    /** Opens a leaf screen, remembering where to come back to. */
+    fun openLeaf(target: NyayaScreen) {
+        if (screen != NyayaScreen.LIBRARY && screen != NyayaScreen.SETTINGS) {
+            returnTo = screen
+        }
+        screen = target
+    }
+
+    fun leaveLeaf() {
+        vm.closeDocument()
+        screen = returnTo
+    }
 
     val micPermission = rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
@@ -154,6 +178,21 @@ private fun NyayaApp(vm: NyayaViewModel) {
 
     fun closeDrawer() = scope.launch { drawerState.close() }
 
+    // The system back gesture must agree with the on-screen Back button. Without
+    // this, back from the library or settings finished the activity instead of
+    // returning, and back inside an open Act left the reader entirely.
+    BackHandler(enabled = drawerState.isOpen) { closeDrawer() }
+    BackHandler(enabled = !drawerState.isOpen && state.openDocument != null) {
+        vm.closeDocument()
+    }
+    BackHandler(
+        enabled = !drawerState.isOpen &&
+            state.openDocument == null &&
+            (screen == NyayaScreen.LIBRARY || screen == NyayaScreen.SETTINGS)
+    ) {
+        leaveLeaf()
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = screen != NyayaScreen.VOICE,
@@ -179,9 +218,9 @@ private fun NyayaApp(vm: NyayaViewModel) {
                         screen = NyayaScreen.CHAT
                     },
                     onDeleteChat = { id -> vm.deleteChat(id) },
-                    onOpenLibrary = { screen = NyayaScreen.LIBRARY },
+                    onOpenLibrary = { openLeaf(NyayaScreen.LIBRARY) },
                     onOpenMeshChat = { openMeshChat() },
-                    onOpenSettings = { screen = NyayaScreen.SETTINGS },
+                    onOpenSettings = { openLeaf(NyayaScreen.SETTINGS) },
                     onClose = { closeDrawer() }
                 )
             }
@@ -196,7 +235,7 @@ private fun NyayaApp(vm: NyayaViewModel) {
                 },
                 onVoiceMode = { openVoiceMode() },
                 onOpenDrawer = { scope.launch { drawerState.open() } },
-                onOpenSettings = { screen = NyayaScreen.SETTINGS },
+                onOpenSettings = { openLeaf(NyayaScreen.SETTINGS) },
                 onActions = { showActions = true },
                 onDownloadModel = { vm.downloadAndLoadModel() },
                 onNewChat = { vm.newChat() },
@@ -208,7 +247,7 @@ private fun NyayaApp(vm: NyayaViewModel) {
                 onSend = { text -> vm.send(text) },
                 onVoiceMode = { openVoiceMode() },
                 onOpenDrawer = { scope.launch { drawerState.open() } },
-                onOpenSettings = { screen = NyayaScreen.SETTINGS },
+                onOpenSettings = { openLeaf(NyayaScreen.SETTINGS) },
                 onActions = { showActions = true },
                 onNewChat = {
                     vm.newChat()
@@ -252,10 +291,7 @@ private fun NyayaApp(vm: NyayaViewModel) {
 
             NyayaScreen.LIBRARY -> LegalLibraryScreen(
                 state = state,
-                onBack = {
-                    vm.closeDocument()
-                    screen = NyayaScreen.HOME
-                },
+                onBack = { leaveLeaf() },
                 onLoad = { vm.loadLibrary() },
                 onOpenDocument = { doc -> vm.openDocument(doc) },
                 onCloseDocument = { vm.closeDocument() },
@@ -269,7 +305,7 @@ private fun NyayaApp(vm: NyayaViewModel) {
             NyayaScreen.SETTINGS -> SettingsScreen(
                 vm = vm,
                 state = state,
-                onBack = { screen = NyayaScreen.HOME }
+                onBack = { leaveLeaf() }
             )
         }
     }
@@ -279,9 +315,9 @@ private fun NyayaApp(vm: NyayaViewModel) {
             incognito = state.incognito,
             onIncognitoChange = { vm.setIncognito(it) },
             onVoiceMode = { openVoiceMode() },
-            onOpenLibrary = { screen = NyayaScreen.LIBRARY },
+            onOpenLibrary = { openLeaf(NyayaScreen.LIBRARY) },
             onOpenMeshChat = { openMeshChat() },
-            onOpenSettings = { screen = NyayaScreen.SETTINGS },
+            onOpenSettings = { openLeaf(NyayaScreen.SETTINGS) },
             onCallLegalAid = { callLegalAid() },
             onDismiss = { showActions = false }
         )

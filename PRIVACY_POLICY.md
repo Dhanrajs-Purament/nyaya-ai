@@ -49,8 +49,8 @@ For anything you would rather not have on the phone at all, open the **+** menu 
 
 - **never written to storage**, not even encrypted;
 - **absent from your conversation list** — no title, no trace in the menu;
-- **dropped from memory** when you leave it;
-- **kept out of the Case File summary**, so it cannot leak into a later conversation.
+- **kept out of the Case File summary**, so it cannot leak into a later conversation;
+- **gone for good** once you start a new conversation or close the app, because it only ever existed in memory.
 
 While it is on, the top of the screen says **"Incognito · not saved"** for the whole conversation. An incognito mode you cannot see is one you cannot trust, so it is always visible.
 
