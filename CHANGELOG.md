@@ -288,7 +288,10 @@ Renamed to **Nyaya AI**. Application ID is now `in.nyaya.ai`.
 - Core messaging features
 - Protocol compatibility with iOS bitchat client
 
-[Unreleased]: https://github.com/permissionlesstech/bitchat-android/compare/0.5.1...HEAD
+[Unreleased]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.9.1-nyaya...HEAD
+[1.9.1]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.9.0-nyaya...v1.9.1-nyaya
+[1.9.0]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.8.0-nyaya...v1.9.0-nyaya
+[1.8.0]: https://github.com/Dhanrajs-Purament/nyaya-ai/releases/tag/v1.8.0-nyaya
 [0.5.1]: https://github.com/permissionlesstech/bitchat-android/compare/0.5...0.5.1
 [0.5]: https://github.com/permissionlesstech/bitchat-android/compare/0.4...0.5
 [0.4]: https://github.com/permissionlesstech/bitchat-android/compare/0.3...0.4

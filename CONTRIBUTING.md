@@ -76,10 +76,15 @@ You need JDK 17+, the Android SDK with platform 35 and build-tools 35, and about
 ```
 
 - **Add a test for what you changed.** For a bug, write the failing test first.
-- **Do not touch bitchat's source.** Every file outside
-  `com/bitchat/android/nyaya/` is byte-identical to upstream, which is what keeps
-  future bitchat updates mergeable. Changes belonging upstream should go
-  upstream. If you genuinely must change one, explain why in the pull request.
+- **Respect the upstream boundary.** bitchat's source is carried forward
+  complete, and almost every file outside `com/bitchat/android/nyaya/` is
+  unchanged from upstream, which is what keeps future bitchat updates mergeable.
+  A small, documented set of upstream files is *extended* (never trimmed) for
+  the file-transfer upgrades: `mesh/MeshService.kt`,
+  `mesh/UnifiedMeshService.kt`, `wifi-aware/WifiAwareMeshService.kt` and
+  `ui/MediaSendingManager.kt`. Changes that belong upstream should go upstream.
+  If you genuinely must touch another bitchat file, explain why in the pull
+  request and keep the change additive.
 - **Match the surrounding style.** Kotlin official style, Compose for UI. Explain
   *why* in comments, not *what*.
 - Keep commits focused, in the imperative mood ("Add tenancy guide"), and keep
@@ -91,11 +96,13 @@ You need JDK 17+, the Android SDK with platform 35 and build-tools 35, and about
 app/src/main/java/com/bitchat/android/
 ├── nyaya/           the AI lawyer — this is where contributions go
 │   ├── ai/          retrieval, engines, model catalog, prompts
+│   ├── history/     encrypted saved conversations
 │   ├── memory/      long-conversation Case File
 │   ├── settings/    Keystore-encrypted preferences
+│   ├── transfer/    honest mesh file limits + the Wi-Fi bulk fast lane
 │   ├── ui/          Compose screens
 │   └── voice/       speech in and out
-└── (everything else) bitchat's mesh messenger — upstream, do not modify
+└── (everything else) bitchat's mesh messenger — upstream; see the boundary rule above
 app/src/main/assets/nyaya_kb/   the offline legal library
 tools/kb/                       fetches the bare acts from India Code
 tools/branding/                 renders the launcher icon

@@ -31,9 +31,13 @@ Nyaya AI is built on top of **bitchat for Android**.
 
 - Upstream: https://github.com/permissionlesstech/bitchat-android
 - Licence: **GPL-3.0**
-- Every bitchat source file in this repository is byte-identical to upstream
-  commit `b7f0b33`. The Nyaya AI code is additive, in
-  `app/src/main/java/com/bitchat/android/nyaya/`.
+- bitchat's stack is carried forward complete from upstream commit `b7f0b33`.
+  The Nyaya AI code lives in its own package,
+  `app/src/main/java/com/bitchat/android/nyaya/`. A small, documented set of
+  upstream files is extended — never trimmed — for the file-transfer upgrades:
+  `mesh/MeshService.kt`, `mesh/UnifiedMeshService.kt`,
+  `wifi-aware/WifiAwareMeshService.kt` and `ui/MediaSendingManager.kt`. All
+  other bitchat source files are unchanged from upstream.
 
 Credit for the mesh protocol, the Noise transport encryption, the Nostr and Tor
 integration and the messenger UI belongs to the bitchat authors and
