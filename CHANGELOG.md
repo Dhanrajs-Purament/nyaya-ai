@@ -7,31 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- **Wi-Fi file fast lane.** Private files up to **256 MB** now travel directly
-  phone-to-phone over the Wi-Fi Aware link when both phones support it and an
-  end-to-end encrypted Noise session is established. Each transfer uses a fresh
-  AES-256-GCM key exchanged inside the Noise session; every frame is
-  authenticated (tampered, retyped or redirected frames fail closed); files
-  stream from disk in 48 KB chunks so memory stays flat; the receiver checks
-  free storage before accepting; interrupted transfers resume from where they
-  stopped; and delivery is confirmed only after the receiver verifies the
-  file's SHA-256. Progress and cancel work exactly like mesh transfers.
-
-### Fixed
-- **Silent file-transfer failure, fixed at the root.** The sender accepted
-  files up to a nominal 50 MB while the receiving phone's reassembly caps
-  allowed roughly 100 KB, so large sends failed silently with a stuck progress
-  indicator. All send paths now validate against limits derived from the real
-  receiver caps, refuse undeliverable files *before* sending with a visible
-  explanation in the same conversation, and automatically re-compress
-  oversized images down a quality ladder until they fit the mesh.
-
-### Changed
-- README rewritten with a visual capability comparison against upstream
-  bitchat, transfer-flow and answer-pipeline diagrams, and corrected build
-  instructions; the privacy policy and terms of use now cover file transfers
-  explicitly; the architecture document covers the fast lane design.
+Nothing yet — the most recent work is released as [1.10.0](#1100---2026-07-25) below.
 
 ## [1.10.0] - 2026-07-25
 
@@ -50,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   knowledge base are now grounded correctly.
 - Hardened BYOK cloud response parsing against malformed replies.
 - Repaired the release workflow, modernised CI, and dropped Jetifier.
+
+### Changed
+- README rewritten with a visual capability comparison against upstream
+  bitchat, transfer-flow and answer-pipeline diagrams, and corrected build
+  instructions; the privacy policy and terms of use now cover file transfers
+  explicitly; the architecture document covers the fast lane design.
 
 ### Notes
 - Adding the bulk fast path required changes to four bitchat transport files
@@ -315,7 +297,8 @@ Renamed to **Nyaya AI**. Application ID is now `in.nyaya.ai`.
 - Core messaging features
 - Protocol compatibility with iOS bitchat client
 
-[Unreleased]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.9.1-nyaya...HEAD
+[Unreleased]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.10.0-nyaya...HEAD
+[1.10.0]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.9.1-nyaya...v1.10.0-nyaya
 [1.9.1]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.9.0-nyaya...v1.9.1-nyaya
 [1.9.0]: https://github.com/Dhanrajs-Purament/nyaya-ai/compare/v1.8.0-nyaya...v1.9.0-nyaya
 [1.8.0]: https://github.com/Dhanrajs-Purament/nyaya-ai/releases/tag/v1.8.0-nyaya
