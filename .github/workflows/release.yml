@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - 'v*.*.*' # Triggers for tags like v1.0.0
+      - 'v*.*.*' # Triggers for tags like v1.9.2 or v1.9.2-nyaya
 
 jobs:
   build:
@@ -20,20 +20,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # setup-gradle replaces the deprecated gradle-build-action and manages
+      # Gradle caching itself, so no separate actions/cache step is needed.
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: wrapper
-
-      - name: Cache Gradle files
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
@@ -46,21 +36,20 @@ jobs:
           echo "APK files built:"
           find app/build/outputs/apk/release -name "*.apk" -type f -exec ls -lh {} \;
 
+      # Without keystore.properties on the runner these are UNSIGNED builds.
+      # Signed store/sideload releases are produced by tools/release; this
+      # workflow exists so a tag always yields reproducible CI artifacts.
       - name: Rename APKs for GitHub Release
         run: |
           cd app/build/outputs/apk/release
-          [ -f "app-arm64-v8a-release-unsigned.apk" ] && mv app-arm64-v8a-release-unsigned.apk bitchat-android-arm64.apk
-          [ -f "app-x86_64-release-unsigned.apk" ] && mv app-x86_64-release-unsigned.apk bitchat-android-x86_64.apk
-          [ -f "app-universal-release-unsigned.apk" ] && mv app-universal-release-unsigned.apk bitchat-android-universal.apk
-
-      - name: DEBUG
-        run: |
-          set -x
-          pwd
-          ls -all
-          cd app/build/outputs/
-          ls -all
-          tree || ls -R
+          for abi in arm64-v8a x86_64 universal; do
+            for f in "app-$abi-release.apk" "app-$abi-release-unsigned.apk"; do
+              if [ -f "$f" ]; then
+                mv "$f" "Nyaya-AI-${{ github.ref_name }}-$abi.apk"
+              fi
+            done
+          done
+          ls -lh
 
       # Optional: Sign APKs (uncomment and configure secrets when ready)
       # - name: Sign APKs
@@ -75,8 +64,8 @@ jobs:
       - name: Upload APKs as artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: bitchat-android-release-${{ github.ref_name }}
-          path: app/build/outputs/apk/release/*.apk
+          name: nyaya-ai-release-${{ github.ref_name }}
+          path: app/build/outputs/apk/release/Nyaya-AI-*.apk
           retention-days: 30
           if-no-files-found: error
 
@@ -88,20 +77,23 @@ jobs:
       - name: Download release artifacts
         uses: actions/download-artifact@v4
         with:
-          name: bitchat-android-release-${{ github.ref_name }}
+          name: nyaya-ai-release-${{ github.ref_name }}
           path: release
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            release/bitchat-android-arm64.apk
-            release/bitchat-android-x86_64.apk
-            release/bitchat-android-universal.apk
-          name: Release ${{ github.ref_name }}
+          files: release/Nyaya-AI-*.apk
+          name: Nyaya AI ${{ github.ref_name }}
+          draft: true
           body: |
-            **bitchat-android-arm64.apk** - ARM64 (most phones)
-            **bitchat-android-x86_64.apk** - x86_64 (Chromebooks, tablets)
-            **bitchat-android-universal.apk** - All architectures (fallback)
+            **Nyaya-AI-${{ github.ref_name }}-arm64-v8a.apk** — ARM64, most phones (recommended)
+            **Nyaya-AI-${{ github.ref_name }}-x86_64.apk** — x86_64 (Chromebooks, emulators)
+            **Nyaya-AI-${{ github.ref_name }}-universal.apk** — all architectures (fallback)
+
+            > ⚠️ These are CI-built artifacts. Unless signing secrets are configured
+            > for this repository, they are **unsigned** and will not install over a
+            > signed release build. Draft release — review, attach signed APKs if
+            > needed, and publish manually.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
