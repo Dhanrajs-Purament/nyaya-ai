@@ -1,6 +1,6 @@
 [versions]
 # Android and Kotlin
-agp = "8.10.1"
+agp = "8.13.2"
 kotlin = "2.2.0"
 compileSdk = "35"
 minSdk = "26" # API 26 for proper BLE support

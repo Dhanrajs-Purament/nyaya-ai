@@ -81,9 +81,23 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
     private fun refreshEngineState() {
         _state.update {
             it.copy(
-                modelDownloaded = downloadManager.isDownloaded(settings.modelFileName),
-                engineLabel = router.activeLabel()
+                modelDownloaded = downloadManager.isDownloaded(
+                    settings.modelFileName,
+                    settings.modelExpectedBytes
+                ),
+                engineLabel = engineLabelWithBackend()
             )
+        }
+    }
+
+    /** e.g. "On-device (offline, GPU)" once a backend has actually loaded. */
+    private fun engineLabelWithBackend(): String {
+        val base = router.activeLabel()
+        val backend = onDevice.activeBackend
+        return if (onDevice.isReady && backend.isNotBlank()) {
+            "On-device (offline, $backend)"
+        } else {
+            base
         }
     }
 
@@ -95,7 +109,8 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
                 downloadManager.download(
                     url = settings.modelUrl,
                     fileName = settings.modelFileName,
-                    hfToken = settings.hfToken
+                    hfToken = settings.hfToken,
+                    expectedBytes = settings.modelExpectedBytes
                 ) { p -> _state.update { it.copy(downloadProgress = p) } }
                 _state.update { it.copy(downloadProgress = null) }
                 loadModel()
@@ -109,7 +124,10 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _state.update { it.copy(modelLoading = true, error = null) }
             try {
-                onDevice.load(downloadManager.modelFile(settings.modelFileName))
+                onDevice.load(
+                    modelFile = downloadManager.modelFile(settings.modelFileName),
+                    preferGpu = settings.preferGpu
+                )
             } catch (e: Exception) {
                 _state.update { it.copy(error = "Could not load model: " + e.message) }
             }
@@ -185,7 +203,8 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
         cloudModel: String,
         modelUrl: String,
         hfToken: String,
-        voiceReplies: Boolean
+        voiceReplies: Boolean,
+        preferGpu: Boolean = settings.preferGpu
     ) {
         settings.engineMode = engineMode
         settings.cloudBaseUrl = cloudBaseUrl
@@ -194,6 +213,7 @@ class NyayaViewModel(application: Application) : AndroidViewModel(application) {
         settings.modelUrl = modelUrl
         settings.hfToken = hfToken
         settings.voiceRepliesEnabled = voiceReplies
+        settings.preferGpu = preferGpu
         refreshEngineState()
     }
 

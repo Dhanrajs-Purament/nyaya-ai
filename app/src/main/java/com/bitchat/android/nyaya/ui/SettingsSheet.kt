@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.bitchat.android.nyaya.ai.NyayaModelCatalog
 import com.bitchat.android.nyaya.settings.NyayaSettings
 
 /**
@@ -55,6 +56,7 @@ fun SettingsScreen(
     var modelUrl by remember { mutableStateOf(settings.modelUrl) }
     var hfToken by remember { mutableStateOf(settings.hfToken) }
     var voiceReplies by remember { mutableStateOf(settings.voiceRepliesEnabled) }
+    var preferGpu by remember { mutableStateOf(settings.preferGpu) }
 
     fun saveAll() {
         vm.updateSettings(
@@ -64,7 +66,8 @@ fun SettingsScreen(
             cloudModel = cloudModel,
             modelUrl = modelUrl,
             hfToken = hfToken,
-            voiceReplies = voiceReplies
+            voiceReplies = voiceReplies,
+            preferGpu = preferGpu
         )
     }
 
@@ -78,7 +81,7 @@ fun SettingsScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { saveAll(); onBack() }) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
                 Text(text = "Settings", style = MaterialTheme.typography.titleLarge)
             }
@@ -102,11 +105,48 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = "On-device model", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Gemma 4 runs entirely on this phone. It is a large one-time " +
+                    "download, so use Wi-Fi. No account or token is needed.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            NyayaModelCatalog.all.forEach { model ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = modelUrl == model.url,
+                        onClick = { modelUrl = model.url }
+                    )
+                    Column {
+                        Text(text = model.displayName)
+                        Text(
+                            text = model.summary,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Switch(checked = preferGpu, onCheckedChange = { preferGpu = it })
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text(text = "Use GPU when available")
+                    Text(
+                        text = "Faster and uses less memory. Falls back to CPU automatically.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = modelUrl,
                 onValueChange = { modelUrl = it },
-                label = { Text("Model URL (.task / .litertlm)") },
+                label = { Text("Advanced: model URL (.litertlm)") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -114,7 +154,7 @@ fun SettingsScreen(
             OutlinedTextField(
                 value = hfToken,
                 onValueChange = { hfToken = it },
-                label = { Text("Hugging Face token (for gated Gemma models)") },
+                label = { Text("Hugging Face token (only for gated custom models)") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
@@ -124,7 +164,7 @@ fun SettingsScreen(
             if (progress != null) {
                 if (progress >= 0f) {
                     LinearProgressIndicator(
-                        progress = progress.coerceIn(0f, 1f),
+                        progress = { progress.coerceIn(0f, 1f) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(4.dp))

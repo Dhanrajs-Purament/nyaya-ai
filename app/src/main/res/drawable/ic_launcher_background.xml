@@ -1,10 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nyaya AI Lawyer — adaptive launcher icon, background layer.
+
+  Deep indigo shading into teal: indigo for institutional/legal trust, teal for
+  the on-device AI and encrypted-mesh side of the product. The diagonal sweep
+  keeps the mark from reading as a flat government logo.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:viewportWidth="135.4667"
-    android:viewportHeight="135.4667"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
-    android:height="108dp">
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path android:pathData="M0,0h108v108H0z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108">
+                <item android:offset="0" android:color="#FF091733" />
+                <item android:offset="0.52" android:color="#FF123A66" />
+                <item android:offset="1" android:color="#FF0C7F7C" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Faint mesh lattice: the peer-to-peer fabric the app rides on. -->
     <path
-        android:pathData="M-0.2617076 -0.1145289H135.7284V135.5812H-0.2617076V-0.1145289Z"
-        android:fillColor="#000000" />
+        android:pathData="M18,86 L40,66 L62,78 L88,54"
+        android:strokeColor="#1FFFFFFF"
+        android:strokeWidth="1.4" />
+    <path
+        android:pathData="M20,30 L44,44 L70,26 L92,40"
+        android:strokeColor="#1AFFFFFF"
+        android:strokeWidth="1.4" />
 </vector>

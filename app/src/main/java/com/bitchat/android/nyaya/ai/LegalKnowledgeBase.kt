@@ -25,7 +25,8 @@ class LegalKnowledgeBase(private val context: Context) {
         val source: String,
         val heading: String,
         val text: String,
-        internal val termFreq: Map<String, Int>
+        internal val termFreq: Map<String, Int>,
+        internal val tokenCount: Int
     )
 
     @Volatile
@@ -37,6 +38,10 @@ class LegalKnowledgeBase(private val context: Context) {
 
     @Volatile
     private var docFreq: Map<String, Int> = emptyMap()
+
+    /** Mean passage length in tokens, used for BM25 length normalisation. */
+    @Volatile
+    private var averageTokens: Double = 1.0
 
     /** Loads and indexes all bundled knowledge. Safe to call multiple times. */
     suspend fun warmUp() {
@@ -61,27 +66,48 @@ class LegalKnowledgeBase(private val context: Context) {
             for (p in all) for (t in p.termFreq.keys) df[t] = (df[t] ?: 0) + 1
             passages = all
             docFreq = df
+            averageTokens = if (all.isEmpty()) 1.0 else {
+                all.sumOf { it.tokenCount.toDouble() } / all.size
+            }
             isWarm = true
         }
     }
 
     fun passageCount(): Int = passages.size
 
-    /** Returns the most relevant passages for [query], bounded by [maxChars]. */
+    /**
+     * Returns the most relevant passages for [query], bounded by [maxChars].
+     *
+     * Ranking is Okapi BM25. Plain TF-IDF was not enough once the full
+     * Income-tax Acts were bundled: those two files alone are roughly 4.5 MB of
+     * the library, so they contribute a large share of all passages, and
+     * everyday questions about consumer complaints or online harassment started
+     * surfacing tax and procedure text instead of the right act. BM25's
+     * length normalisation (the `b` term) and saturating term frequency (the
+     * `k1` term) stop a handful of very large statutes from dominating, and let
+     * the short curated summaries — which are the highest-signal files in the
+     * library — win when they are genuinely the best answer.
+     */
     fun retrieve(query: String, maxPassages: Int = 4, maxChars: Int = 3000): List<Passage> {
         val snapshot = passages
         if (snapshot.isEmpty()) return emptyList()
         val queryTerms = tokenize(query)
         if (queryTerms.isEmpty()) return emptyList()
         val n = snapshot.size.toDouble()
+        val avgLen = averageTokens.coerceAtLeast(1.0)
         val scored = snapshot.mapNotNull { p ->
             var score = 0.0
+            val lengthNorm = K1 * (1.0 - B + B * (p.tokenCount / avgLen))
             for ((term, qtf) in queryTerms) {
                 val tf = p.termFreq[term] ?: continue
                 val df = (docFreq[term] ?: 1).toDouble()
-                val idf = ln(1.0 + n / df)
-                score += qtf * (1.0 + ln(1.0 + tf.toDouble())) * idf
-                if (p.heading.lowercase(Locale.ROOT).contains(term)) score += idf
+                // BM25 IDF, floored at zero so terms present in almost every
+                // passage cannot push a score negative.
+                val idf = ln(1.0 + (n - df + 0.5) / (df + 0.5)).coerceAtLeast(0.0)
+                score += qtf * idf * (tf * (K1 + 1.0)) / (tf + lengthNorm)
+                if (p.heading.lowercase(Locale.ROOT).contains(term)) {
+                    score += idf * HEADING_BOOST
+                }
             }
             if (score <= 0.0) null else p to score
         }.sortedByDescending { it.second }
@@ -111,7 +137,8 @@ class LegalKnowledgeBase(private val context: Context) {
         fun flush() {
             val text = current.toString().trim()
             if (text.length >= MIN_PASSAGE_CHARS) {
-                result += Passage(sourceTitle, heading, text, tokenize(heading + " " + text))
+                val freq = tokenize(heading + " " + text)
+                result += Passage(sourceTitle, heading, text, freq, freq.values.sum())
             }
             current.setLength(0)
         }
@@ -146,6 +173,15 @@ class LegalKnowledgeBase(private val context: Context) {
         private const val ASSET_DIR = "nyaya_kb"
         private const val MAX_PASSAGE_CHARS = 1600
         private const val MIN_PASSAGE_CHARS = 40
+
+        /** BM25 term-frequency saturation. */
+        private const val K1 = 1.2
+
+        /** BM25 length normalisation strength (0 = off, 1 = full). */
+        private const val B = 0.75
+
+        /** Extra weight when a query term appears in the passage's heading. */
+        private const val HEADING_BOOST = 0.9
         private val TOKEN_REGEX = Regex("[a-z0-9]+")
         private val STOPWORDS = setOf(
             "the", "a", "an", "of", "and", "or", "to", "in", "on", "for", "by",

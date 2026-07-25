@@ -1,9 +1,30 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.compose)
 }
+
+// Release signing is configured from an untracked keystore.properties at the
+// repository root, so no credential ever lands in version control:
+//
+//   storeFile=/absolute/path/to/nyaya-release.jks
+//   storePassword=...
+//   keyAlias=nyaya
+//   keyPassword=...
+//
+// When the file is absent the release build simply stays unsigned, which keeps
+// `./gradlew assembleRelease` working for CI and for contributors who do not
+// hold the signing key.
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+val hasReleaseSigning = keystoreProperties.getProperty("storeFile") != null
 
 android {
     namespace = "com.bitchat.android"
@@ -29,6 +50,17 @@ android {
         includeInBundle = false
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             ndk {
@@ -37,6 +69,9 @@ android {
             }
         }
         release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -65,11 +100,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        // Java 11: JDK 21 warns that source/target 8 is obsolete, and minSdk 26
+        // supports the Java 11 language level through desugaring without any
+        // extra core-library desugaring configuration.
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
@@ -84,11 +119,43 @@ android {
         abortOnError = false
         checkReleaseBuilds = false
     }
+    testOptions {
+        unitTests {
+            // Robolectric needs the merged assets/resources on the unit-test
+            // classpath so the Nyaya tests can index the real bundled
+            // knowledge base from src/main/assets/nyaya_kb.
+            isIncludeAndroidResources = true
+            all { test ->
+                // Robolectric's native runtime ships binaries for linux-x86_64,
+                // mac-x86_64, mac-aarch64 and windows-x86_64 only. On an aarch64
+                // Linux host (ARM cloud builders, Raspberry-Pi-class dev boxes) it
+                // aborts with "native runtime is not supported on Linux (aarch64)"
+                // and every Robolectric test fails before its body runs. Falling
+                // back to the legacy graphics/SQLite implementations keeps the
+                // suite runnable there. Left untouched on every other platform so
+                // CI (ubuntu-latest, x86_64) keeps testing the native path.
+                val arch = System.getProperty("os.arch").orEmpty()
+                val isLinuxArm64 = System.getProperty("os.name").orEmpty().startsWith("Linux") &&
+                    (arch == "aarch64" || arch == "arm64")
+                if (isLinuxArm64) {
+                    test.systemProperty("robolectric.graphicsMode", "LEGACY")
+                    test.systemProperty("robolectric.sqliteMode", "LEGACY")
+                }
+            }
+        }
+    }
+}
+
+// Kotlin JVM target, set through the current compilerOptions DSL. The old
+// android.kotlinOptions.jvmTarget property is deprecated in Kotlin 2.x.
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+    }
 }
 
 dependencies {
-    // Core Android dependencies
-    implementation(libs.androidx.core.ktx)
+    // Core Android dependencies    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     
@@ -130,9 +197,13 @@ dependencies {
     // WebSocket
     implementation(libs.okhttp)
 
-    // Nyaya AI Lawyer — on-device LLM inference (Gemma .task/.litertlm bundles)
-    // via Google MediaPipe LLM Inference API (runs fully offline on the phone)
-    implementation("com.google.mediapipe:tasks-genai:0.10.24")
+    // Nyaya AI Lawyer — on-device LLM inference for Gemma 4 `.litertlm` bundles
+    // via Google's LiteRT-LM runtime (runs fully offline on the phone).
+    // Replaces MediaPipe tasks-genai: Gemma 4 is published for LiteRT-LM, and
+    // that runtime applies each model's own chat template, so the app never has
+    // to hand-assemble Gemma turn markers.
+    // Note: ships native code for arm64-v8a and x86_64 only.
+    implementation("com.google.ai.edge.litertlm:litertlm-android:0.14.0")
 
     // Arti (Tor in Rust) Android bridge - custom build from latest source
     // Built with rustls, 16KB page size support, and onio//un service client
@@ -153,5 +224,9 @@ dependencies {
     testImplementation(libs.bundles.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.compose.testing)
+    // Needed by the instrumentation tests that exercise AndroidKeyStore-backed
+    // crypto, which cannot run on the JVM under Robolectric.
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
