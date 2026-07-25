@@ -35,6 +35,20 @@ class ConversationMemory(
         caseFile = ""
     }
 
+    /**
+     * Restores a conversation that was reopened from the user's saved history.
+     *
+     * The Case File has to come back with the turns. Once a long conversation has
+     * been compacted the older exchanges exist only inside that summary, so
+     * restoring turns alone would silently drop the names, dates and FIR numbers
+     * the user already gave and the model would start asking for them again.
+     */
+    fun restore(previousTurns: List<ChatTurn>, previousCaseFile: String) {
+        turns.clear()
+        turns.addAll(previousTurns)
+        caseFile = previousCaseFile
+    }
+
     private fun estimateTokens(text: String): Int = text.length / 4 + 1
 
     /**

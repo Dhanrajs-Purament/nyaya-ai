@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+## [1.9.0] - 2026-07-25
+
+### Added
+- **Saved conversations.** Your chats are kept on your phone, encrypted with a key
+  held in the Android Keystore, until you delete them. Delete one from the
+  navigation drawer, or all of them from Settings. Nothing is uploaded, and the
+  Case File summary is saved with each conversation so reopening a long
+  consultation does not lose the names, dates and FIR numbers already given.
+- **Incognito chat.** Nothing written to storage, no entry in the conversation
+  list, dropped from memory on leaving, and excluded from the Case File. Shown in
+  the top bar for the whole conversation.
+- **Offline legal library.** Browse and read the full text of every bundled Act,
+  guides first, with repealed Acts badged. Works before any model is downloaded.
+- **Navigation drawer** where Nyaya AI and Mesh chat are peer modes, with search
+  over your conversations.
+- **Actions sheet** behind the input bar's `+`: voice, library, mesh chat,
+  settings, the incognito switch, and one tap to the NALSA legal-aid helpline
+  (via the dialler — the app never places a call itself).
+- **Stop button** to cancel a reply while it is being generated.
+- **Copy and read-aloud** on every answer.
+
+### Changed
+- Complete UI redesign on a new design system (`ui/theme/NyayaTheme.kt`): full
+  light and dark schemes, a cornflower-blue canvas gradient, a light-weight
+  display type scale, pill-shaped floating controls, and a brand mark drawn in
+  Compose so it scales without a second asset.
+- Home screen reduced to one question and one input bar; suggestions are a single
+  scrolling row rather than stacked cards.
+- Assistant answers are no longer rendered in chat bubbles, which made
+  multi-paragraph legal text harder to read.
+- Voice mode rebuilt around a pearlescent orb driven by microphone amplitude.
+- Mesh chat moved from a home-screen card into the drawer, as a peer mode.
+
+### Fixed
+- Every lint issue in the Nyaya code: the force-finish receiver is now registered
+  through `ContextCompat` so the not-exported flag applies below API 33, the
+  brand mark takes `Modifier` as its first optional parameter, and preference
+  writes use the `edit {}` extension.
+- Deprecated Compose APIs replaced at root: `LocalClipboard` in place of
+  `LocalClipboardManager`, and the AutoMirrored variants of the `Article`,
+  `VolumeUp` and `MenuBook` icons.
+- `ChatHistoryStore` no longer depends on `android.util.Log`, so it is unit
+  testable on the JVM instead of needing Robolectric.
+
+### Notes
+- Each mode owns its own data. Mesh chat's panic wipe clears mesh chat; it does
+  not delete your Nyaya conversations, because those are yours to delete. Deleting
+  Nyaya conversations does not touch mesh chat.
+- 190 unit tests, 0 failures.
+
 ## [1.8.0] - 2026-07-25
 
 Renamed to **Nyaya AI**. Application ID is now `in.nyaya.ai`.

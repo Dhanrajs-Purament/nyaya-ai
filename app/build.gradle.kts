@@ -34,8 +34,8 @@ android {
         applicationId = "in.nyaya.ai"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 37
-        versionName = "1.8.0"
+        versionCode = 38
+        versionName = "1.9.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

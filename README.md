@@ -103,7 +103,9 @@ The fetcher validates that every download is a real PDF before writing it, retri
 - **Always routes to real help** — free legal aid (**NALSA 15100**), emergencies (**112**), and it states plainly that it is not a lawyer.
 - **Two engines** — on-device Gemma 4 by default, or your own API key for a cloud model. Your choice, switchable in Settings.
 - **Suggested starting questions** for people who do not know how to ask.
-- **New chat** clears a sensitive conversation immediately.
+- **Your conversations, saved on your phone** — come back to a consultation tomorrow. Encrypted with a key held in the Android Keystore, never uploaded, and kept until *you* delete them. Delete one from the menu, or all of them from Settings.
+- **Incognito chat** — for anything you would rather not have on the phone at all: nothing written to storage, no entry in your list, dropped when you leave it, and kept out of the Case File. The top bar says "Incognito · not saved" the whole time, because a private mode you cannot see is one you cannot trust.
+- **Offline legal library** — browse and read the full text of every bundled Act yourself, with plain-language guides first and repealed Acts clearly badged. Works even before you download a model.
 
 ### Where the AI actually helps
 
@@ -237,6 +239,20 @@ OpenAI, Groq, OpenRouter, a self-hosted vLLM or Ollama — anything that speaks 
 
 ---
 
+## The interface
+
+Rebuilt in v1.9.0 around a single design system (`ui/theme/NyayaTheme.kt`) rather than colours hard-coded per screen — which is why it now supports a light theme at all.
+
+- **One question per screen.** The home screen is the brand mark, "How can I help?", and the input bar. The previous version stacked five competing calls to action on a first-time user.
+- **A calm canvas.** Near-white deepening into cornflower blue, with the hero lifted on a soft glow. Full light and dark schemes, following the system setting.
+- **A floating pill input bar** — `+` for actions, the field, mic, and one trailing action that is *either* send or stop, never both, so a reply cannot be double-submitted.
+- **A navigation drawer where the two modes are peers.** Nyaya AI and Mesh chat sit side by side, with your saved conversations, search, the legal library and settings. Mesh chat is no longer a card buried in the middle of a screen.
+- **Answers are not in bubbles.** A legal answer runs to paragraphs with section numbers; boxing that at a fixed width makes it markedly harder to read. Your messages are in a tinted pill, the answer is plain text on the canvas, with copy and read-aloud beneath it.
+- **A voice orb that reacts to your voice** rather than animating on a timer — the microphone amplitude drives it, so it is obvious the app is listening without printing a status line.
+- **The engine is always on screen.** Whether an answer came from the on-device model or your own cloud key changes both its privacy and its accuracy, so the top bar states which is active instead of hiding it in settings.
+
+The design references are in [`docs/ui-inspiration/`](docs/ui-inspiration).
+
 ## Free forever
 
 Nyaya AI is **free of charge to every user, permanently**. No subscription, no paid tier, no advertising, no in-app purchase, no "pro" version, no data sold. It was built to help people who cannot afford a lawyer, and charging them would defeat the point.
@@ -251,15 +267,15 @@ It is also **free software** under the GNU General Public License v3.0 or later:
 
 ### Just click and install — no account, no sign-up, free
 
-[![Download for most phones](https://img.shields.io/badge/⬇_DOWNLOAD_NOW-Most_phones_·_39_MB-2ea44f?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-1-RECOMMENDED-most-phones.apk)
+[![Download for most phones](https://img.shields.io/badge/⬇_DOWNLOAD_NOW-Most_phones_·_39_MB-2ea44f?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.9.0-nyaya/Nyaya-AI-v1.9.0-1-RECOMMENDED-most-phones.apk)
 
 **↑ Start here.** Works on every Android phone sold in roughly the last eight years.
 
-[![Backup download](https://img.shields.io/badge/⬇_Backup_download-Works_on_all_phones_·_93_MB-1f6feb?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-2-BACKUP-works-on-all-phones.apk)
+[![Backup download](https://img.shields.io/badge/⬇_Backup_download-Works_on_all_phones_·_93_MB-1f6feb?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.9.0-nyaya/Nyaya-AI-v1.9.0-2-BACKUP-works-on-all-phones.apk)
 
 **↑ Only if the green one refuses to install.** Same app, contains every CPU type, so it is bigger.
 
-<sub>Version 1.8.0 · Requires Android 8.0+ · The offline AI additionally needs a 64-bit phone with 4 GB+ RAM · Free forever, no ads, no tracking</sub>
+<sub>Version 1.9.0 · Requires Android 8.0+ · The offline AI additionally needs a 64-bit phone with 4 GB+ RAM · Free forever, no ads, no tracking</sub>
 
 </div>
 
@@ -270,10 +286,10 @@ It is also **free software** under the GNU General Public License v3.0 or later:
 
 | Download | Who it is for | Size |
 |---|---|---|
-| [Old 32-bit phones](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-3-old-32-bit-phones.apk) | Very old budget phones. Mesh chat works, but **the offline AI cannot run on 32-bit devices**. | 16 MB |
-| [Emulator / ChromeOS 64-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-4-emulator-and-ChromeOS-64-bit.apk) | Developers, and some ChromeOS devices. | 44 MB |
-| [Emulator 32-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-5-emulator-32-bit.apk) | Developers only. | 21 MB |
-| [SHA256SUMS.txt](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/SHA256SUMS.txt) | Checksums, to verify your download is genuine. | — |
+| [Old 32-bit phones](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.9.0-nyaya/Nyaya-AI-v1.9.0-3-old-32-bit-phones.apk) | Very old budget phones. Mesh chat works, but **the offline AI cannot run on 32-bit devices**. | 16 MB |
+| [Emulator / ChromeOS 64-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.9.0-nyaya/Nyaya-AI-v1.9.0-4-emulator-and-ChromeOS-64-bit.apk) | Developers, and some ChromeOS devices. | 44 MB |
+| [Emulator 32-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.9.0-nyaya/Nyaya-AI-v1.9.0-5-emulator-32-bit.apk) | Developers only. | 21 MB |
+| [SHA256SUMS.txt](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.9.0-nyaya/SHA256SUMS.txt) | Checksums, to verify your download is genuine. | — |
 
 All five APKs are the **same app**. They differ only in which CPU type they carry.
 

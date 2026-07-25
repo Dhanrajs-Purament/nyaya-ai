@@ -29,9 +29,41 @@ All of the following is stored only in the app's private storage on your device.
 
 | What | Where | How to remove it |
 |---|---|---|
-| Your questions and the AI's answers | App memory during the session, plus the running "Case File" summary | Tap **New chat**, or clear the app's data |
+| Your conversations — your questions, the AI's answers, and the running "Case File" summary | Saved on this phone, encrypted with a key held in the Android Keystore | Delete one from the menu, or **Settings → Delete all conversations** |
 | The downloaded AI model (2.4–3.4 GB) | App-private storage | Delete the model in Settings, or uninstall |
 | Your settings, including any API key and Hugging Face token | Encrypted with a key held in the Android Keystore | Clear the field, clear app data, or uninstall |
+
+### Your conversations belong to you
+
+Your conversations are **kept until you delete them**. They are not uploaded, not used to train anything, not shared, and not deleted behind your back — there is no expiry and no silent clean-up of old chats.
+
+Deleting is available in three places, so you are never more than a tap or two from removing something:
+
+- **One conversation** — open the menu and tap the bin next to it.
+- **The conversation you are reading** — start a new one, then delete the old one from the menu.
+- **Everything** — **Settings → Delete all conversations.** This is permanent and the app asks you to confirm.
+
+### Incognito chats
+
+For anything you would rather not have on the phone at all, open the **+** menu and turn on **Incognito chat**. An incognito conversation is:
+
+- **never written to storage**, not even encrypted;
+- **absent from your conversation list** — no title, no trace in the menu;
+- **dropped from memory** when you leave it;
+- **kept out of the Case File summary**, so it cannot leak into a later conversation.
+
+While it is on, the top of the screen says **"Incognito · not saved"** for the whole conversation. An incognito mode you cannot see is one you cannot trust, so it is always visible.
+
+If you switch incognito **on** part-way through a conversation, whatever had already been saved of it is deleted.
+
+### The two modes keep separate data
+
+Nyaya AI and the mesh messenger are two modes of one app, and each owns its own storage:
+
+- Deleting your Nyaya conversations does **not** touch mesh chat's messages, contacts or identity.
+- Mesh chat's **panic wipe** clears mesh chat's data and identity. It does **not** delete your saved Nyaya conversations, because those are yours to delete.
+
+If you want both gone, use each mode's own control, or uninstall the app.
 | Mesh identity keys and nicknames | Encrypted with a key held in the Android Keystore | bitchat's panic/wipe action, or uninstall |
 
 Uninstalling the app removes all of it. The app has Android backup disabled, so none of this is copied into a cloud backup.
@@ -142,7 +174,7 @@ This app is intended to be genuinely useful to students and young people, and th
 
 Your API keys, tokens and mesh identity keys are encrypted using a key held in the Android Keystore, which is backed by your device's secure hardware where available. Mesh messages are end-to-end encrypted using the Noise protocol. Screenshots of the app are disabled in the Android recents screen.
 
-No system is perfect. If your phone itself is compromised, or if someone has your unlocked phone, the protections above cannot save your chat history — so use a screen lock, and use **New chat** to clear a sensitive conversation when you are done.
+No system is perfect. If your phone itself is compromised, or if someone has your unlocked phone, the protections above cannot help — encryption at rest defends against an offline extraction of app storage, not against someone holding your phone with the screen unlocked. So use a screen lock, delete conversations you no longer need, and use an **incognito chat** for anything you would rather never be saved.
 
 To report a security problem, see [SECURITY.md](SECURITY.md).
 

@@ -15,7 +15,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +60,7 @@ fun SettingsScreen(
     var hfToken by remember { mutableStateOf(settings.hfToken) }
     var voiceReplies by remember { mutableStateOf(settings.voiceRepliesEnabled) }
     var preferGpu by remember { mutableStateOf(settings.preferGpu) }
+    var confirmDeleteAll by remember { mutableStateOf(false) }
 
     fun saveAll() {
         vm.updateSettings(
@@ -239,6 +243,42 @@ fun SettingsScreen(
                 Text(text = "Speak replies aloud in voice mode")
             }
 
+
+            Spacer(modifier = Modifier.height(28.dp))
+            Text(
+                text = "Your conversations",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Your ${state.chats.size} saved conversation" +
+                    (if (state.chats.size == 1) "" else "s") +
+                    " are stored only on this phone, encrypted with a key held in " +
+                    "the Android Keystore. They are never uploaded and are kept until " +
+                    "you delete them. Delete one at a time from the menu, or everything " +
+                    "here. Use an incognito chat for anything you do not want saved at all.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Mesh chat keeps its own separate data. Clearing conversations " +
+                    "here does not touch it, and its panic wipe does not touch these.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = { confirmDeleteAll = true },
+                enabled = state.chats.isNotEmpty(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                )
+            ) {
+                Text("Delete all conversations")
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { saveAll(); onBack() },
@@ -248,5 +288,31 @@ fun SettingsScreen(
             }
             Spacer(modifier = Modifier.height(24.dp))
         }
+    }
+
+    if (confirmDeleteAll) {
+        AlertDialog(
+            onDismissRequest = { confirmDeleteAll = false },
+            title = { Text("Delete all conversations?") },
+            text = {
+                Text(
+                    "This permanently removes all " + state.chats.size +
+                        " saved conversations from this phone. It cannot be undone."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        vm.deleteAllChats()
+                        confirmDeleteAll = false
+                    }
+                ) {
+                    Text("Delete everything")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDeleteAll = false }) { Text("Keep them") }
+            }
+        )
     }
 }

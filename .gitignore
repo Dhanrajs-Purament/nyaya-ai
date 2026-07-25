@@ -66,3 +66,4 @@ tools/arti-build/target/
 
 # Release signing credentials (never commit)
 keystore.properties
+docs/ui-inspiration/*.png

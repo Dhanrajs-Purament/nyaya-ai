@@ -1,0 +1,13 @@
+Complete new interface.
+
+• Your conversations are now saved on your phone, encrypted, and kept until
+  you delete them. Delete one, or all of them, whenever you want.
+• New incognito chat for anything you do not want saved at all.
+• New offline legal library: read the full text of all 25 bundled Acts
+  yourself, even before downloading the AI.
+• New side menu with your conversations, search, and mesh chat.
+• Redesigned home, chat and voice screens, with a light and a dark theme.
+• Copy or listen to any answer, and stop a reply while it is being written.
+• One tap to the free legal aid helpline, 15100.
+
+All encrypted mesh chat features are unchanged.

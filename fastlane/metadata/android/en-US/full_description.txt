@@ -11,6 +11,12 @@ No account, no server, no analytics, no advertising. Questions about domestic vi
 THE LAW, ALREADY INSIDE THE APP
 25 complete bare Acts from official Government of India sources: the new criminal codes (BNS, BNSS, BSA), the Constitution, contracts, property, civil procedure, marriage and succession, domestic violence, dowry, consumer protection, the IT Act, data protection, RTI, companies, insolvency, GST, motor vehicles, and both income-tax regimes — the 1961 Act marked as repealed and the Income-tax Act 2025 in force from 1 April 2026. Plus 10 plain-language guides covering police procedure, arrest rights, free legal aid, and online harassment and leaked photos.
 
+YOUR CONVERSATIONS ARE YOURS
+Chats are saved on your phone, encrypted with a key held in the Android Keystore, and kept until you delete them. Delete one, or all of them, whenever you like. For anything you would rather not have saved at all, use an incognito chat: nothing is written to storage, it never appears in your list, and the screen tells you so the whole time.
+
+READ THE LAW YOURSELF
+An offline library of every bundled Act, with plain-language guides first and repealed Acts clearly marked. It works even before you download the AI.
+
 ENCRYPTED CHAT WITH NO INTERNET
 Includes bitchat's Bluetooth mesh messenger: phones talk directly to each other with no cell tower, no SIM and no internet, end-to-end encrypted with the Noise protocol.
 

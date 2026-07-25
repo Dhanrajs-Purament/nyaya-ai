@@ -69,6 +69,51 @@ V1 uses Android's built-in on-device speech stack: `SpeechRecognizer` with
 Indian languages where installed). No API cost. V1.1 upgrade path: sherpa-onnx
 (Kokoro/Piper voices) for higher quality fully-bundled voices.
 
+## UI layer
+
+One design system, `ui/theme/NyayaTheme.kt`, owns colour, type, shape and the
+brand gradients for every Nyaya screen. Before v1.9.0 each screen hard-coded its
+own hex values, which is why a light theme was impossible; screens now read from
+`MaterialTheme` and `NyayaTheme.gradients` only.
+
+| File | Responsibility |
+|---|---|
+| `ui/theme/NyayaTheme.kt` | Light and dark colour schemes, type scale, shapes, canvas/hero/orb gradients |
+| `ui/components/NyayaBrandMark.kt` | The four-point spark, drawn in Compose so it scales without an asset |
+| `ui/components/NyayaTopBar.kt` | Drawer button, active-engine chip, incognito indicator, new chat |
+| `ui/components/NyayaInputBar.kt` | Floating pill: actions, field, mic, and send *or* stop |
+| `ui/components/NyayaDrawer.kt` | Mode switch, conversation search and list, library, settings |
+| `ui/components/NyayaActionsSheet.kt` | The `+` sheet: voice, library, mesh, settings, incognito, helpline |
+| `ui/components/VoiceOrb.kt` | Pearlescent orb driven by microphone amplitude |
+| `ui/NyayaHomeScreen.kt` | Hero, suggestions, model setup |
+| `ui/NyayaChatScreen.kt` | Transcript, unbubbled answers, copy and read-aloud |
+| `ui/VoiceModeScreen.kt` | Hands-free mode |
+| `ui/LegalLibraryScreen.kt` | Browse and read the bundled Acts |
+| `ui/SettingsSheet.kt` | Engine, model, BYOK, voice, delete-all-conversations |
+
+Navigation is a single `NyayaScreen` enum inside `NyayaActivity`, wrapped in a
+`ModalNavigationDrawer`. There is no navigation graph: five screens with no deep
+links or argument passing do not need one, and the enum keeps the whole flow
+readable in one file.
+
+## Conversation storage
+
+`history/ChatHistoryStore.kt` keeps the user's conversations in one JSON document
+written through `EncryptedFile`, rewritten atomically after each completed reply.
+`history/SavedChat.kt` carries the transcript **and** the Case File summary —
+without the latter, reopening a compacted conversation would silently lose the
+facts the user already provided.
+
+Two rules are structural rather than conventional:
+
+- The store is pure Kotlin behind a `ChatFileCodec` seam, so its logic is unit
+  tested on the JVM; the Android-specific encryption sits in the codec.
+- `upsert` refuses to write a chat flagged incognito, and a test asserts the file
+  is never even created.
+
+Each mode owns its data: bitchat's panic wipe clears bitchat's, and Nyaya's
+conversations are removed only by the user, from the drawer or Settings.
+
 ## Security
 
 - BYOK keys: EncryptedSharedPreferences (AES-256-GCM, Android Keystore master key).
