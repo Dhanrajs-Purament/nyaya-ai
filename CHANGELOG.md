@@ -33,6 +33,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   instructions; the privacy policy and terms of use now cover file transfers
   explicitly; the architecture document covers the fast lane design.
 
+## [1.10.0] - 2026-07-25
+
+### Added
+- **Large file transfer over Wi-Fi Aware.** Private files that are too big for the
+  Bluetooth mesh (which caps at roughly 120 KB per transfer) now stream over a
+  direct, Noise-encrypted Wi-Fi Aware socket in verified chunks, so photos,
+  documents and larger media move in seconds instead of failing silently. New
+  `nyaya/transfer/bulk/` protocol (BulkFrames, BulkTransferManager) with
+  per-chunk SHA-256 verification, wired into the Wi-Fi Aware transport.
+- Honest, enforced transfer limits (`MeshTransferLimits`) replacing the fictional
+  50 MB cap that the mesh could never actually deliver.
+
+### Fixed
+- Hindi and Hinglish questions that previously retrieved nothing from the offline
+  knowledge base are now grounded correctly.
+- Hardened BYOK cloud response parsing against malformed replies.
+- Repaired the release workflow, modernised CI, and dropped Jetifier.
+
+### Notes
+- Adding the bulk fast path required changes to four bitchat transport files
+  (MeshService, UnifiedMeshService, MediaSendingManager, WifiAwareMeshService), so
+  those files are no longer byte-identical to upstream. The bulk path is additive
+  and negotiated per peer, so iOS interoperability with the existing mesh format
+  is preserved.
+- 213 unit tests, 0 failures. The bulk transfer protocol cannot be exercised
+  without two physical devices and has not been run on hardware.
+
 ## [1.9.1] - 2026-07-25
 
 ### Fixed

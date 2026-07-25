@@ -1,0 +1,8 @@
+Send large files fast.
+
+• Photos, documents and larger media now send over a direct encrypted
+  Wi-Fi link between phones, instead of failing on the slower Bluetooth mesh.
+• Questions in Hindi and Hinglish now find the right law.
+• More reliable answers when using your own API key.
+
+Every encrypted mesh chat feature is unchanged.
