@@ -15,7 +15,7 @@ Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline 
 [![Price](https://img.shields.io/badge/Price-Free%20forever-brightgreen.svg)](#free-forever)
 [![Privacy](https://img.shields.io/badge/Data%20collected-None-brightgreen.svg)](PRIVACY_POLICY.md)
 
-[Install](#install) · [Legal library](#the-offline-legal-library) · [Privacy](PRIVACY_POLICY.md) · [Terms](TERMS_OF_USE.md) · [Licences](THIRD_PARTY_LICENSES.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[Install](#install) · [AI features](#the-ai-legal-assistant--features) · [Mesh chat features](#encrypted-mesh-chat--every-bitchat-feature-included) · [Legal library](#the-offline-legal-library) · [Privacy](PRIVACY_POLICY.md) · [Terms](TERMS_OF_USE.md) · [Licences](THIRD_PARTY_LICENSES.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 </div>
 
@@ -35,6 +35,9 @@ It is built on top of [bitchat](https://github.com/permissionlesstech/bitchat-an
 ### One app, two halves
 
 Both features ship in a single APK behind a **single launcher icon**. Open **Nyaya AI** and the home screen has an **"Encrypted mesh chat"** card that opens the full bitchat messenger; Back returns you to the AI lawyer.
+
+- **[The AI legal assistant](#the-ai-legal-assistant--features)** — offline answers grounded in 25 Indian Acts.
+- **[Encrypted mesh chat](#encrypted-mesh-chat--every-bitchat-feature-included)** — the complete bitchat messenger, every feature included, nothing removed.
 
 The messenger keeps its own activity rather than being redrawn as a screen inside the AI lawyer. That is deliberate: bitchat's `MainActivity` owns the mesh service lifecycle, the Bluetooth onboarding and permission flow, its own back-press handling and several broadcast receivers. Re-hosting its UI elsewhere would mean duplicating all of that, and **every bitchat source file in this repository is byte-identical to upstream**, which keeps future merges from upstream clean. Nyaya also listens for bitchat's force-finish broadcast, so quitting or panic-wiping closes the whole app rather than leaving the AI screen open behind it.
 
@@ -116,6 +119,125 @@ python3 tools/kb/fetch_full_kb.py --only bns
 ```
 
 The fetcher validates that every download is a real PDF before writing it, retries with backoff, and if a pinned India Code URL has rotted it re-discovers the current one by searching India Code by title. It exits non-zero if any act fails.
+
+---
+
+## The AI legal assistant — features
+
+- **Fully offline answers** — after a one-time model download, works permanently in airplane mode.
+- **Grounded in real law (RAG)** — every question searches the 25 bundled Acts and the matching passages are given to the model, which is instructed to cite section numbers **only** from those extracts. This is what stops it inventing sections.
+- **BM25 retrieval** over heading-aligned passages, with length normalisation so a few huge statutes cannot drown out everyday questions.
+- **Answers in your language** — English, Hindi, Hinglish, or any Indian language you write in.
+- **Voice mode** — speak your question and hear the answer read back, for users who cannot type comfortably or read easily.
+- **Long-conversation memory** — a rolling "Case File" preserves names, dates, FIR numbers and advice already given, so a 30-message consultation stays coherent instead of overflowing the model's context.
+- **Anti-hallucination guardrails** — the system prompt forbids invented case names, citations and section numbers, and requires the model to say when it is unsure.
+- **Knows the law changed** — it is told that BNS, BNSS and BSA replaced the IPC, CrPC and Evidence Act from 1 July 2024, and both income-tax regimes are labelled.
+- **Always routes to real help** — free legal aid (**NALSA 15100**), emergencies (**112**), and it states plainly that it is not a lawyer.
+- **Two engines** — on-device Gemma 4 by default, or your own API key for a cloud model. Your choice, switchable in Settings.
+- **Suggested starting questions** for people who do not know how to ask.
+- **New chat** clears a sensitive conversation immediately.
+
+### Where the AI actually helps
+
+- **The police refuse to register an FIR** — learn about Zero FIR, the written complaint to the Superintendent of Police under BNSS 173(4), and the application to the Magistrate under 175(3).
+- **Someone has been detained** — the 24-hour production rule, the right to know the grounds of arrest, the right to inform a relative, the rule against arresting a woman after sunset.
+- **Domestic violence or dowry harassment** — what protection orders exist and who to approach.
+- **Photos leaked or online harassment** — which BNS and IT Act sections apply, the 24-hour takedown right, and how to report on cybercrime.gov.in.
+- **A defective product and a shop refusing a refund** — consumer forum route and limitation periods.
+- **Divorce, maintenance, inheritance** — what the personal-law statutes actually say.
+- **Filing an RTI** — how the process works.
+- **A student needing to understand a law** for study, a moot, or a class assignment.
+- **Cannot afford a lawyer at all** — the app's first answer to that is free legal aid, with the number.
+
+---
+
+## Encrypted mesh chat — every bitchat feature, included
+
+The **entire** bitchat for Android messenger ships inside this app. Nothing was removed, disabled or cut down: all 232 bitchat source files are byte-identical to upstream commit `b7f0b33`, and a test in the suite fails if the messenger is ever dropped from the build. Open **Nyaya AI** and tap **"Encrypted mesh chat"** on the home screen to use it.
+
+Why it belongs in a legal-help app: the moment you most need to tell someone your rights is often the moment the network is down, the area has no signal, your data pack has run out, or you do not want a record on a phone company's servers. Mesh chat and offline AI solve the same problem from two directions.
+
+### Messaging and the mesh network
+
+- **Bluetooth LE mesh networking** — phones find each other automatically and form a network with no router, no cell tower, no SIM and no internet.
+- **Multi-hop relay** — a message hops phone-to-phone to reach someone out of your direct Bluetooth range, so the group's reach is larger than any one phone's.
+- **Wi-Fi Aware transport** — an additional direct phone-to-phone radio path on supported devices, for more range and speed than Bluetooth alone.
+- **Store and forward** — messages for someone who is offline are held and delivered automatically when they come back in range. You do not have to be online at the same moment.
+- **Cross-platform** — protocol-compatible with bitchat on iOS, so Android and iPhone users are on the same mesh.
+- **Delivery and read receipts** — you can see that a message actually arrived, which matters when it is important.
+- **Signal strength (RSSI) indicators** — see how solid each peer's connection is before relying on it.
+- **Nostr relays and geohash channels** — when internet *is* available, reach people in a wider geographic area rather than only those nearby.
+- **Bundled Tor** — route that internet traffic through Tor for stronger privacy.
+
+### Groups, channels and contacts
+
+- **Channels** — topic-based group chats, created instantly with `/join #name`.
+- **Password-protected channels** — the owner sets a password with `/pass`; keys are derived with Argon2id.
+- **Channel ownership and transfer** — hand control to someone you trust with `/transfer`.
+- **Message retention, controlled by the channel owner** — `/save` decides whether a channel's messages are kept on device or vanish.
+- **Favourites** — mark people so you recognise them across sessions.
+- **Block and unblock** — `/block @name` stops someone messaging you.
+- **@mentions with autocomplete** — pull a specific person's attention in a busy channel.
+- **QR code contact verification** — scan a contact in person to confirm you are talking to who you think you are, not an impostor.
+- **Nicknames** — pick a display name; no phone number and no real name required.
+
+### Content you can send
+
+- **Private and group text messages**
+- **Voice notes** — record and send audio, useful when typing is hard or the user cannot read comfortably.
+- **Images**, with EXIF orientation handled correctly.
+- **File transfer** over the mesh.
+
+### Security and privacy
+
+- **End-to-end encryption** using the **Noise protocol** for private messages — nobody in the middle of the mesh can read them, including phones that relay them.
+- **X25519 / Curve25519** key exchange, **AES-256-GCM** message encryption, **Ed25519** digital signatures for authenticity, **Argon2id** for channel passwords.
+- **No accounts, no phone numbers, no email, no persistent identifier.**
+- **Ephemeral by default** — messages live in device memory unless a channel owner turns retention on.
+- **Packet padding and cover traffic** — message sizes and timing are obscured so an observer cannot infer much from traffic patterns.
+- **Emergency wipe (panic mode)** — instantly destroy identity keys and data. In this app it closes the whole application, AI screen included.
+- **Screenshots disabled** in the Android recents screen.
+- **No servers at all** in Bluetooth mesh mode, so there is nothing to subpoena, breach or sell.
+
+### Running well on a real phone
+
+- **Background mesh foreground service** — keeps receiving messages while you use other apps.
+- **Battery optimisation** — adaptive scanning and power modes instead of draining the battery.
+- **LZ4 message compression** — roughly 30–70% less data on typical text, which matters on a slow mesh.
+- **Jetpack Compose / Material 3 UI**, dark and light themes, haptic feedback, adaptive layouts.
+- **Notifications** for incoming messages.
+- **Guided onboarding** for Bluetooth and permissions.
+- **Runs on Android 8.0+** — the messenger works even on old 32-bit phones that cannot run the offline AI.
+
+### Commands
+
+Verified against `CommandProcessor` in this build:
+
+| Command | What it does |
+|---|---|
+| `/join #channel` or `/j` | Join or create a channel |
+| `/msg @name text` or `/m` | Send a private message |
+| `/w` | List who is online |
+| `/channels` | Show all discovered channels |
+| `/block @name` / `/block` | Block someone / list blocked peers |
+| `/unblock @name` | Unblock someone |
+| `/pass [password]` | Set or change the channel password (owner only) |
+| `/transfer @name` | Transfer channel ownership |
+| `/save` | Toggle message retention for the channel (owner only) |
+| `/clear` | Clear the messages on screen |
+| `/hug @name`, `/slap @name` | Fun actions |
+
+### Where mesh chat actually helps
+
+- **A protest, rally or large gathering** where the mobile network is congested or has been shut down, and people need to coordinate and share their rights.
+- **A power cut, flood, cyclone or earthquake** with towers down — neighbours can still reach each other, and one person with the AI model can relay legal or procedural information to everyone.
+- **Villages and remote areas** with no reliable coverage, where a group of phones forms its own network.
+- **A police station, court complex or hospital** with no signal inside the building.
+- **A student hostel or campus** — free group chat with no data pack.
+- **Anyone who does not want a record** with a telecom operator of who they spoke to about a legal problem, which is the situation for many domestic-violence and harassment cases.
+- **No SIM, no credit, no data pack** — none of it is required.
+
+For the messenger's own deeper documentation, see upstream [bitchat for Android](https://github.com/permissionlesstech/bitchat-android).
 
 ---
 

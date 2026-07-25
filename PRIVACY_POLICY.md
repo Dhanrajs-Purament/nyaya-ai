@@ -49,9 +49,60 @@ When you tap "Download & load model", the app fetches the model file from Huggin
 If you enter your own API key in Settings, your questions and the retrieved legal extracts are sent to the endpoint **you** configured (for example OpenAI, Groq, OpenRouter, or your own server). In this mode your data leaves your phone and is handled under **that provider's** privacy policy, not this one. The app never sends anything to any endpoint you did not enter yourself. On-device mode is the default; cloud mode is off unless you switch it on.
 
 **3. The mesh messenger's optional internet features.**
-bitchat's mesh chat works over Bluetooth with no internet. It also has optional features that use the internet (Nostr relays, and Tor for privacy). Those are part of the mesh messenger and are described in bitchat's own documentation.
+bitchat's mesh chat works over Bluetooth with **no internet and no servers at all**. It also has optional features that do use the internet — geohash channels over Nostr relays, and Tor. See the mesh section below.
 
 There is no telemetry, no crash reporting, no analytics SDK, no advertising SDK, and no "phone home" check of any kind. The app does not contain them.
+
+---
+
+## The encrypted mesh messenger, in detail
+
+The full bitchat messenger is included in this app. Its privacy properties are described here rather than summarised away, because they differ from the AI side.
+
+### What it stores on your device
+
+| What | Why it exists | How long |
+|---|---|---|
+| **Identity key** | A cryptographic key made on first launch, so peers you mark as favourites still recognise you after a restart | Until you wipe or uninstall. **Never leaves your device.** |
+| **Nickname** | The display name you pick or are given | Until you change it |
+| **Favourite peers** | Public keys of people you chose to remember | Until you remove them |
+| **Message history** | Only if a channel owner turned retention on. Stored encrypted on your device | Until you clear it |
+| **Active connections and routing info** | To deliver messages | Forgotten when the app closes |
+| **Cached messages for offline peers** | Store-and-forward, so someone out of range still gets your message | Maximum 12 hours |
+
+### What other people can see
+
+Nearby peers on the mesh can see your chosen **nickname**, your **ephemeral public key** (which changes each session), the **messages you send** to a public channel or directly to them, and your approximate **Bluetooth signal strength**, which is used for connection quality.
+
+In a password-protected channel, anyone with the password sees your messages and your nickname in the member list, and the owner can see that you joined.
+
+They cannot see your phone number, your real name, your contacts, your location or your other messages, because the app never has them.
+
+### Encryption used
+
+- **Noise protocol** for the private-message transport
+- **X25519 / Curve25519** for key exchange
+- **AES-256-GCM** for message encryption
+- **Ed25519** for digital signatures, so a message cannot be forged
+- **Argon2id** to derive channel passwords
+- **Packet padding and cover traffic**, so message size and timing reveal little to an observer
+
+### Location, and why it is genuinely needed
+
+- **For Bluetooth scanning:** Android itself *requires* location permission before any app may scan for Bluetooth LE devices, because scan results could in principle be used to infer position. The app uses it only to discover nearby peers. Your location is not recorded, stored or transmitted.
+- **For geohash channels (optional):** if you turn this on, the app converts your location into a **geohash** — a short string describing a coarse *area*, not a point — to find channels for your region on Nostr relays. **Your precise GPS coordinates are never sent to any server or peer.** You can use Bluetooth mesh chat and never enable this.
+
+No location history is collected, stored or shared, ever.
+
+### Internet, only if you choose it
+
+Bluetooth mesh mode uses **no internet and no servers**. Two optional features do use the internet: **geohash channels**, which relay through public Nostr relays, and **Tor**, which routes that traffic through the Tor network for stronger privacy. Both are yours to switch on or leave off.
+
+### Wiping everything
+
+The mesh messenger has an **emergency wipe (panic mode)** that immediately destroys the identity key and stored data. In this app it closes the entire application, the AI side included. Closing the app also makes your presence on the mesh disappear.
+
+**You remain responsible for what you send.** Messages travel directly between phones with no server, but that does not make an unlawful message lawful. See [TERMS_OF_USE.md](TERMS_OF_USE.md).
 
 ---
 
