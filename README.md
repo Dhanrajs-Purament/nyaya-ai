@@ -370,8 +370,6 @@ It is also **free software** under the GNU General Public License v3.0 or later:
 
 <sub>Version 1.10.0 · Requires Android 8.0+ · The offline AI additionally needs a 64-bit phone with 4 GB+ RAM · Free forever, no ads, no tracking</sub>
 
-<sub>The honest file-size handling and the Wi-Fi file fast lane are in the source now and ship in the next release build.</sub>
-
 </div>
 
 <details>
@@ -559,7 +557,6 @@ Known limitations:
 - The Income-tax Act 2025 is not published on `indiacode.nic.in` or any reachable `.gov.in` host, so it comes from PRS Legislative Research's copy of the text as passed by Lok Sabha. The file says so.
 - 2.4 GB is a heavy download for the users this is aimed at. There is no smaller Gemma 4.
 - The Wi-Fi file fast lane needs **Wi-Fi Aware** hardware on both phones; many budget phones do not have it. Where it is missing, the app falls back to the honest mesh behaviour — images auto-fitted, everything else explained visibly. Like the rest of the app, the fast lane has passed its test suite but still needs a two-phone field test.
-- The v1.9.1 release APKs above were built before the file-transfer upgrades landed; those ship in the next release build.
 
 ---
 
