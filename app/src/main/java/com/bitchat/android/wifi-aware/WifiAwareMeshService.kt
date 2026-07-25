@@ -20,7 +20,10 @@ import com.bitchat.android.mesh.MeshTransport
 import com.bitchat.android.mesh.PeerInfo
 import com.bitchat.android.model.BitchatFilePacket
 import com.bitchat.android.model.BitchatMessage
+import com.bitchat.android.model.BitchatMessageType
 import com.bitchat.android.model.RoutedPacket
+import com.bitchat.android.nyaya.transfer.bulk.BulkFrames
+import com.bitchat.android.nyaya.transfer.bulk.BulkTransferManager
 import com.bitchat.android.protocol.BitchatPacket
 import com.bitchat.android.protocol.MessageType
 import com.bitchat.android.protocol.SpecialRecipients
@@ -90,6 +93,34 @@ class WifiAwareMeshService(private val context: Context) : MeshService, Transpor
     private val wifiTransport = WifiAwareTransport()
     private lateinit var meshCore: MeshCore
     private lateinit var fragmentingSender: FragmentingPacketSender
+
+    // End-to-end encrypted bulk file transfer over the Wi-Fi Aware TCP socket.
+    // Chunks are encrypted with a per-transfer AES-256-GCM key that is itself
+    // transported inside a Noise-encrypted OFFER, so the Noise session's rekey
+    // message counters are not consumed by file chunks.
+    private val bulkTransferManager by lazy {
+        BulkTransferManager(
+            scope = serviceScope,
+            incomingDirProvider = { java.io.File(context.filesDir, "nyaya/incoming") },
+            noiseEncrypt = { data, pid -> try { encryptionService.encrypt(data, pid) } catch (_: Exception) { null } },
+            noiseDecrypt = { data, pid -> try { encryptionService.decrypt(data, pid) } catch (_: Exception) { null } },
+            writeFrame = { pid, bytes ->
+                val sock = connectionTracker.getSocketForPeer(pid)
+                if (sock == null) {
+                    false
+                } else {
+                    try {
+                        sock.write(bytes)
+                        true
+                    } catch (_: IOException) {
+                        false
+                    }
+                }
+            },
+            onFileReceived = { pid, path, name, mime -> deliverBulkFile(pid, path, name, mime) },
+            onTransferFailed = { pid, _, reason -> deliverBulkFailure(pid, reason) }
+        )
+    }
 
     // Service-level notification manager for background (no-UI) DMs
     private val serviceNotificationManager = com.bitchat.android.ui.NotificationManager(
@@ -1258,6 +1289,15 @@ class WifiAwareMeshService(private val context: Context) : MeshService, Transpor
                 continue
             }
 
+            // Nyaya bulk transfer frames ride the same socket but are not
+            // BitchatPackets; route them to the bulk manager keyed by the
+            // rebind-aware logical peer id. Old builds that don't know the
+            // magic simply fail BitchatPacket parsing and skip the frame.
+            if (BulkFrames.isBulkFrame(raw)) {
+                bulkTransferManager.onFrameReceived(logicalPeerId, raw)
+                continue
+            }
+
             val pkt = BitchatPacket.fromBinaryData(raw) ?: continue
 
             val senderPeerHex = pkt.senderID?.toHexString()?.take(16) ?: continue
@@ -1401,12 +1441,75 @@ class WifiAwareMeshService(private val context: Context) : MeshService, Transpor
 
     /**
      * Attempts to cancel an in-flight file transfer identified by its transferId.
+     * Covers both mesh fragment transfers and Wi-Fi bulk transfers.
      *
-     * @param transferId Deterministic id (usually sha256 of the file TLV).
+     * @param transferId Deterministic id (usually sha256 of the file TLV) or bulk transfer id.
      * @return true if a transfer with this id was found and cancellation was scheduled, false otherwise.
      */
     override fun cancelFileTransfer(transferId: String): Boolean {
-        return meshCore.cancelFileTransfer(transferId)
+        return meshCore.cancelFileTransfer(transferId) || bulkTransferManager.cancelOutgoing(transferId)
+    }
+
+    /**
+     * @return true when the peer has a live Wi-Fi Aware socket AND an established Noise
+     * session. Both are required: the per-transfer AES-256-GCM key travels inside a
+     * Noise-encrypted OFFER, so the fast path never runs without end-to-end encryption.
+     */
+    override fun canSendFileBulk(peerID: String): Boolean {
+        return connectionTracker.getSocketForPeer(peerID) != null && meshCore.hasEstablishedSession(peerID)
+    }
+
+    /**
+     * Starts an end-to-end encrypted bulk file transfer over the Wi-Fi Aware socket.
+     *
+     * @return the transfer id (hex) used for progress/cancel, or null when the fast path
+     * is unavailable (no socket, no Noise session, or the manager rejected the file).
+     */
+    override fun sendFileBulk(recipientPeerID: String, filePath: String, fileName: String, mimeType: String): String? {
+        if (!canSendFileBulk(recipientPeerID)) {
+            Log.w(TAG, "BULK: cannot send to ${recipientPeerID.take(8)} - no socket or no established Noise session")
+            return null
+        }
+        return bulkTransferManager.sendFile(recipientPeerID, filePath, fileName, mimeType)
+    }
+
+    /** Surfaces a completed (SHA-256 verified) bulk transfer as a normal private media message. */
+    private fun deliverBulkFile(peerID: String, filePath: String, fileName: String, mimeType: String) {
+        val type = when {
+            mimeType.lowercase().startsWith("image/") -> BitchatMessageType.Image
+            mimeType.lowercase().startsWith("audio/") -> BitchatMessageType.Audio
+            else -> BitchatMessageType.File
+        }
+        val nickname = try { meshCore.getPeerNickname(peerID) } catch (_: Exception) { null } ?: peerID
+        val message = BitchatMessage(
+            id = java.util.UUID.randomUUID().toString().uppercase(),
+            sender = nickname,
+            content = filePath,
+            type = type,
+            timestamp = java.util.Date(),
+            isRelay = false,
+            isPrivate = true,
+            senderPeerID = peerID
+        )
+        Log.i(TAG, "BULK: received '$fileName' ($mimeType) from ${peerID.take(8)} -> $filePath")
+        handleMessageReceived(message)
+        try { delegate?.didReceiveMessage(message) } catch (_: Exception) { }
+    }
+
+    /** Surfaces a failed bulk transfer as a visible system message instead of failing silently. */
+    private fun deliverBulkFailure(peerID: String, reason: String) {
+        val message = BitchatMessage(
+            id = java.util.UUID.randomUUID().toString().uppercase(),
+            sender = "system",
+            content = "large file transfer failed: $reason",
+            timestamp = java.util.Date(),
+            isRelay = false,
+            isPrivate = true,
+            senderPeerID = peerID
+        )
+        Log.w(TAG, "BULK: transfer with ${peerID.take(8)} failed: $reason")
+        handleMessageReceived(message)
+        try { delegate?.didReceiveMessage(message) } catch (_: Exception) { }
     }
 
     /**

@@ -135,6 +135,19 @@ class UnifiedMeshService(
         return bleCancelled || wifiCancelled
     }
 
+    override fun canSendFileBulk(peerID: String): Boolean {
+        return try { wifiService()?.canSendFileBulk(peerID) == true } catch (_: Exception) { false }
+    }
+
+    override fun sendFileBulk(recipientPeerID: String, filePath: String, fileName: String, mimeType: String): String? {
+        return try {
+            wifiService()?.sendFileBulk(recipientPeerID, filePath, fileName, mimeType)
+        } catch (e: Exception) {
+            Log.w(TAG, "Bulk file send failed to start: ${e.message}")
+            null
+        }
+    }
+
     override fun sendBroadcastAnnounce() {
         if (isBleEnabled()) {
             try { bluetooth.sendBroadcastAnnounce() } catch (_: Exception) { }
