@@ -23,6 +23,20 @@ interface MeshService {
     fun sendFilePrivate(recipientPeerID: String, file: BitchatFilePacket)
     fun cancelFileTransfer(transferId: String): Boolean
 
+    /**
+     * Nyaya fast path: whether a large file can be sent to this peer over a
+     * high-bandwidth local link (e.g. the Wi-Fi Aware TCP socket) instead of
+     * the fragment-limited mesh path. Default: unsupported.
+     */
+    fun canSendFileBulk(peerID: String): Boolean = false
+
+    /**
+     * Nyaya fast path: starts a bulk file transfer to the peer. Returns the
+     * transfer ID used by TransferProgressManager, or null when the fast path
+     * is unavailable. Default: unsupported.
+     */
+    fun sendFileBulk(recipientPeerID: String, filePath: String, fileName: String, mimeType: String): String? = null
+
     fun sendBroadcastAnnounce()
     fun sendAnnouncementToPeer(peerID: String)
 
