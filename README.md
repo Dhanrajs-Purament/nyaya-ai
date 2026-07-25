@@ -11,67 +11,15 @@
 Gemma 4 running fully on-device · 25 complete Indian bare acts bundled offline · encrypted Bluetooth mesh messaging
 
 [![Licence: GPL v3](https://img.shields.io/badge/Licence-GPL%20v3-blue.svg)](LICENSE.md)
-[![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3ddc84.svg)](#install)
+[![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3ddc84.svg)](#download)
 [![Price](https://img.shields.io/badge/Price-Free%20forever-brightgreen.svg)](#free-forever)
 [![Privacy](https://img.shields.io/badge/Data%20collected-None-brightgreen.svg)](PRIVACY_POLICY.md)
 
-[Install](#install) · [AI features](#the-ai-legal-assistant--features) · [Mesh chat features](#encrypted-mesh-chat--every-bitchat-feature-included) · [Legal library](#the-offline-legal-library) · [Privacy](PRIVACY_POLICY.md) · [Terms](TERMS_OF_USE.md) · [Licences](THIRD_PARTY_LICENSES.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[What it does](#what-this-is) · [AI features](#the-ai-legal-assistant) · [Mesh chat features](#encrypted-mesh-chat) · [Legal library](#the-offline-legal-library) · [Privacy](PRIVACY_POLICY.md) · [Terms](TERMS_OF_USE.md) · [Licences](THIRD_PARTY_LICENSES.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+
+**[⬇ Download the app](#download)**
 
 </div>
-
----
-
-<div align="center">
-
-## Download
-
-### Just click and install — no account, no sign-up, free
-
-[![Download for most phones](https://img.shields.io/badge/⬇_DOWNLOAD_NOW-Most_phones_·_39_MB-2ea44f?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-1-RECOMMENDED-most-phones.apk)
-
-**↑ Start here.** Works on every Android phone sold in roughly the last eight years.
-
-[![Backup download](https://img.shields.io/badge/⬇_Backup_download-Works_on_all_phones_·_93_MB-1f6feb?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-2-BACKUP-works-on-all-phones.apk)
-
-**↑ Only if the green one refuses to install.** Same app, contains every CPU type, so it is bigger.
-
-<sub>Version 1.8.0 · Android 8.0+ · Free forever, no ads, no tracking</sub>
-
-</div>
-
-<details>
-<summary><b>Other downloads</b> — old 32-bit phones, emulators, ChromeOS, and checksums</summary>
-
-<br>
-
-| Download | Who it is for | Size |
-|---|---|---|
-| [Old 32-bit phones](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-3-old-32-bit-phones.apk) | Very old budget phones. Mesh chat works, but **the offline AI cannot run on 32-bit devices**. | 16 MB |
-| [Emulator / ChromeOS 64-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-4-emulator-and-ChromeOS-64-bit.apk) | Developers, and some ChromeOS devices. | 44 MB |
-| [Emulator 32-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-5-emulator-32-bit.apk) | Developers only. | 21 MB |
-| [SHA256SUMS.txt](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/SHA256SUMS.txt) | Checksums, to verify your download is genuine. | — |
-
-All five APKs are the **same app**. They differ only in which CPU type they carry.
-
-Verify a download:
-
-```bash
-sha256sum -c SHA256SUMS.txt --ignore-missing
-```
-
-Or browse [**all releases**](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/latest).
-
-</details>
-
-### After you download
-
-1. **Tap the downloaded file.**
-2. Android will ask permission to **"install from unknown sources"** — allow it. This app is not on the Play Store, so Android asks by default.
-3. Open **Nyaya AI**.
-4. **Settings → pick a model → Download & load model.** Use Wi-Fi; this is a large one-time download. **No account and no token needed.**
-5. Ask your question — in English, Hindi, Hinglish or your own language.
-
-**Do not want a 2.4 GB download?** Skip step 4 and paste your own API key in Settings instead. Or use the encrypted mesh chat, which needs no model at all.
 
 ---
 
@@ -90,48 +38,12 @@ It is built on top of [bitchat](https://github.com/permissionlesstech/bitchat-an
 
 Both features ship in a single APK behind a **single launcher icon**. Open **Nyaya AI** and the home screen has an **"Encrypted mesh chat"** card that opens the full bitchat messenger; Back returns you to the AI lawyer.
 
-- **[The AI legal assistant](#the-ai-legal-assistant--features)** — offline answers grounded in 25 Indian Acts.
-- **[Encrypted mesh chat](#encrypted-mesh-chat--every-bitchat-feature-included)** — the complete bitchat messenger, every feature included, nothing removed.
+- **[The AI legal assistant](#the-ai-legal-assistant)** — offline answers grounded in 25 Indian Acts.
+- **[Encrypted mesh chat](#encrypted-mesh-chat)** — the complete bitchat messenger, every feature included, nothing removed.
 
 The messenger keeps its own activity rather than being redrawn as a screen inside the AI lawyer. That is deliberate: bitchat's `MainActivity` owns the mesh service lifecycle, the Bluetooth onboarding and permission flow, its own back-press handling and several broadcast receivers. Re-hosting its UI elsewhere would mean duplicating all of that, and **every bitchat source file in this repository is byte-identical to upstream**, which keeps future merges from upstream clean. Nyaya also listens for bitchat's force-finish broadcast, so quitting or panic-wiping closes the whole app rather than leaving the AI screen open behind it.
 
 > **This app gives legal information, not legal advice.** It is not a lawyer and does not create a lawyer–client relationship. For anything serious — arrest, court dates, a live FIR — get a real advocate. Free legal aid is a right in India: call **NALSA on 15100**. In an emergency call **112**.
-
----
-
-## The brand mark
-
-<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="88" align="left" hspace="16" vspace="4" alt="icon" />
-
-The icon is one shape carrying all three halves of the product. A **shield** for encryption and privacy, the bitchat heritage. **Scales of justice** for Indian law. And the beam of those scales is a **network graph** — two amber mesh nodes with an AI node at the apex feeding into the fulcrum — so the legal symbol and the encrypted-AI-network symbol are the same object rather than two logos pushed together. Indigo shading into teal: institutional trust moving into on-device intelligence.
-
-<br clear="left" />
-
----
-
-## Two AI engines
-
-| | On-device (default) | Cloud (bring your own key) |
-|---|---|---|
-| Privacy | Nothing leaves the phone | Sent to the endpoint you choose |
-| Works offline | Yes | No |
-| Cost | Free | Your own API billing |
-| Setup | One 2.4 GB download | Paste a key |
-
-### On-device: Gemma 4 via LiteRT-LM
-
-| Model | Download | RAM | Notes |
-|---|---|---|---|
-| **Gemma 4 E2B** (default) | 2.4 GB | 4 GB+ | Recommended. Good answers on most mid-range phones. |
-| **Gemma 4 E4B** | 3.4 GB | 6 GB+ | Stronger multi-step reasoning, needs a better phone. |
-
-Both are the Apache-2.0 `.litertlm` builds from [litert-community](https://huggingface.co/litert-community), run through Google's **LiteRT-LM** runtime. They are **not licence-gated**, so no Hugging Face account or token is needed. The runtime applies each model's own chat template, tries the **GPU** first (faster and lighter on RAM) and falls back to CPU automatically.
-
-On-device AI needs a **64-bit** phone (`arm64-v8a`). On 32-bit devices the mesh chat still works and you can use your own API key.
-
-### Cloud: any OpenAI-compatible endpoint
-
-OpenAI, Groq, OpenRouter, a self-hosted vLLM or Ollama — anything that speaks `/chat/completions`. Your key is stored in Android Keystore-encrypted preferences and is only ever sent to the endpoint you configured.
 
 ---
 
@@ -176,7 +88,9 @@ The fetcher validates that every download is a real PDF before writing it, retri
 
 ---
 
-## The AI legal assistant — features
+## The AI legal assistant
+
+*What it can do, and when it helps.*
 
 - **Fully offline answers** — after a one-time model download, works permanently in airplane mode.
 - **Grounded in real law (RAG)** — every question searches the 25 bundled Acts and the matching passages are given to the model, which is instructed to cite section numbers **only** from those extracts. This is what stops it inventing sections.
@@ -205,7 +119,9 @@ The fetcher validates that every download is a real PDF before writing it, retri
 
 ---
 
-## Encrypted mesh chat — every bitchat feature, included
+## Encrypted mesh chat
+
+*The complete bitchat messenger. Every feature included, nothing removed.*
 
 The **entire** bitchat for Android messenger ships inside this app. Nothing was removed, disabled or cut down: all 232 bitchat source files are byte-identical to upstream commit `b7f0b33`, and a test in the suite fails if the messenger is ever dropped from the build. Open **Nyaya AI** and tap **"Encrypted mesh chat"** on the home screen to use it.
 
@@ -295,11 +211,91 @@ For the messenger's own deeper documentation, see upstream [bitchat for Android]
 
 ---
 
+## Two AI engines
+
+| | On-device (default) | Cloud (bring your own key) |
+|---|---|---|
+| Privacy | Nothing leaves the phone | Sent to the endpoint you choose |
+| Works offline | Yes | No |
+| Cost | Free | Your own API billing |
+| Setup | One 2.4 GB download | Paste a key |
+
+### On-device: Gemma 4 via LiteRT-LM
+
+| Model | Download | RAM | Notes |
+|---|---|---|---|
+| **Gemma 4 E2B** (default) | 2.4 GB | 4 GB+ | Recommended. Good answers on most mid-range phones. |
+| **Gemma 4 E4B** | 3.4 GB | 6 GB+ | Stronger multi-step reasoning, needs a better phone. |
+
+Both are the Apache-2.0 `.litertlm` builds from [litert-community](https://huggingface.co/litert-community), run through Google's **LiteRT-LM** runtime. They are **not licence-gated**, so no Hugging Face account or token is needed. The runtime applies each model's own chat template, tries the **GPU** first (faster and lighter on RAM) and falls back to CPU automatically.
+
+On-device AI needs a **64-bit** phone (`arm64-v8a`). On 32-bit devices the mesh chat still works and you can use your own API key.
+
+### Cloud: any OpenAI-compatible endpoint
+
+OpenAI, Groq, OpenRouter, a self-hosted vLLM or Ollama — anything that speaks `/chat/completions`. Your key is stored in Android Keystore-encrypted preferences and is only ever sent to the endpoint you configured.
+
+---
+
 ## Free forever
 
 Nyaya AI is **free of charge to every user, permanently**. No subscription, no paid tier, no advertising, no in-app purchase, no "pro" version, no data sold. It was built to help people who cannot afford a lawyer, and charging them would defeat the point.
 
 It is also **free software** under the GNU General Public License v3.0 or later: you may use it, read it, modify it and share it. If you distribute a modified version you must pass those same freedoms on. See [LICENSE.md](LICENSE.md) and [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+
+---
+
+## Download
+
+<div align="center">
+
+### Just click and install — no account, no sign-up, free
+
+[![Download for most phones](https://img.shields.io/badge/⬇_DOWNLOAD_NOW-Most_phones_·_39_MB-2ea44f?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-1-RECOMMENDED-most-phones.apk)
+
+**↑ Start here.** Works on every Android phone sold in roughly the last eight years.
+
+[![Backup download](https://img.shields.io/badge/⬇_Backup_download-Works_on_all_phones_·_93_MB-1f6feb?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-2-BACKUP-works-on-all-phones.apk)
+
+**↑ Only if the green one refuses to install.** Same app, contains every CPU type, so it is bigger.
+
+<sub>Version 1.8.0 · Requires Android 8.0+ · The offline AI additionally needs a 64-bit phone with 4 GB+ RAM · Free forever, no ads, no tracking</sub>
+
+</div>
+
+<details>
+<summary><b>Other downloads</b> — old 32-bit phones, emulators, ChromeOS, and checksums</summary>
+
+<br>
+
+| Download | Who it is for | Size |
+|---|---|---|
+| [Old 32-bit phones](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-3-old-32-bit-phones.apk) | Very old budget phones. Mesh chat works, but **the offline AI cannot run on 32-bit devices**. | 16 MB |
+| [Emulator / ChromeOS 64-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-4-emulator-and-ChromeOS-64-bit.apk) | Developers, and some ChromeOS devices. | 44 MB |
+| [Emulator 32-bit](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/Nyaya-AI-v1.8.0-5-emulator-32-bit.apk) | Developers only. | 21 MB |
+| [SHA256SUMS.txt](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/download/v1.8.0-nyaya/SHA256SUMS.txt) | Checksums, to verify your download is genuine. | — |
+
+All five APKs are the **same app**. They differ only in which CPU type they carry.
+
+Verify a download:
+
+```bash
+sha256sum -c SHA256SUMS.txt --ignore-missing
+```
+
+Or browse [**all releases**](https://github.com/Dhanrajs-Purament/nyaya-ai/releases/latest).
+
+</details>
+
+### After you download
+
+1. **Tap the downloaded file.**
+2. Android will ask permission to **"install from unknown sources"** — allow it. This app is not on the Play Store, so Android asks by default.
+3. Open **Nyaya AI**.
+4. **Settings → pick a model → Download & load model.** Use Wi-Fi; this is a large one-time download. **No account and no token needed.**
+5. Ask your question — in English, Hindi, Hinglish or your own language.
+
+**Do not want a 2.4 GB download?** Skip step 4 and paste your own API key in Settings instead. Or use the encrypted mesh chat, which needs no model at all.
 
 ---
 
@@ -316,24 +312,6 @@ It is also **free software** under the GNU General Public License v3.0 or later:
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community standards |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 | [docs/nyaya/ARCHITECTURE.md](docs/nyaya/ARCHITECTURE.md) | Deeper technical design |
-
----
-
-## Install
-
-**[⬇ Jump to the download buttons at the top of this page.](#download)**
-
-Quick reference:
-
-| File | Who it is for | Size |
-|---|---|---|
-| `…-1-RECOMMENDED-most-phones.apk` | **Start here.** Every Android phone sold in roughly the last eight years. | 39 MB |
-| `…-2-BACKUP-works-on-all-phones.apk` | Only if the recommended file refuses to install. | 93 MB |
-| `…-3-old-32-bit-phones.apk` | Very old budget phones. Mesh chat works; offline AI does not run on 32-bit. | 16 MB |
-| `…-4-emulator-and-ChromeOS-64-bit.apk` | Developers, and some ChromeOS devices. | 44 MB |
-| `…-5-emulator-32-bit.apk` | Developers only. | 21 MB |
-
-Minimum Android 8.0 (API 26). The offline AI additionally needs a 64-bit phone with 4 GB+ RAM.
 
 ---
 
@@ -410,6 +388,16 @@ app/src/main/java/com/bitchat/android/nyaya/
 **Answering a question:** the question is tokenised → BM25 finds the most relevant passages across the bundled acts → those passages plus the guardrail system prompt plus the running Case File go to whichever engine is active → the reply is appended to memory, and older turns are compacted into the Case File so a long conversation never overflows the model's context.
 
 **Model download:** verified against the exact expected byte count and the `LITERTLM` file header before the partial file is promoted, so an interrupted 2.4 GB transfer can never masquerade as a working model. Interrupted downloads resume.
+
+---
+
+## The brand mark
+
+<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="88" align="left" hspace="16" vspace="4" alt="icon" />
+
+The icon is one shape carrying all three halves of the product. A **shield** for encryption and privacy, the bitchat heritage. **Scales of justice** for Indian law. And the beam of those scales is a **network graph** — two amber mesh nodes with an AI node at the apex feeding into the fulcrum — so the legal symbol and the encrypted-AI-network symbol are the same object rather than two logos pushed together. Indigo shading into teal: institutional trust moving into on-device intelligence.
+
+<br clear="left" />
 
 ---
 
