@@ -2,6 +2,7 @@ package com.bitchat.android.nyaya.ai
 
 import com.bitchat.android.nyaya.settings.NyayaSettings
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,13 @@ import java.util.concurrent.TimeUnit
  * self-hosted vLLM/Ollama, etc.) over HTTPS using the user's own API key.
  * The key is stored in Keystore-encrypted preferences and is only ever sent to
  * the endpoint the user configured.
+ *
+ * "OpenAI-compatible" is a loose standard, so the response parser makes no
+ * assumptions beyond the envelope: `message.content` may be a plain string or
+ * an array of typed parts, refusals may arrive instead of content, and some
+ * providers return HTTP 200 with an `error` object in the body. Every failure
+ * path throws an [IOException] whose message says what the provider actually
+ * returned, because a BYOK user's only debugging tool is that message.
  */
 class CloudLlmEngine(private val settings: NyayaSettings) : LlmEngine {
 
@@ -62,13 +70,70 @@ class CloudLlmEngine(private val settings: NyayaSettings) : LlmEngine {
             if (!resp.isSuccessful) {
                 throw IOException("Cloud AI error HTTP " + resp.code + ": " + bodyStr.take(300))
             }
-            val parsed = JsonParser.parseString(bodyStr).asJsonObject
-            parsed.getAsJsonArray("choices")
-                .get(0).asJsonObject
-                .getAsJsonObject("message")
-                .get("content").asString
-                .trim()
+            parseChatCompletion(bodyStr)
         }
+    }
+
+    /**
+     * Extracts the assistant text from an OpenAI-style chat completion body,
+     * tolerating the variations found across "compatible" providers.
+     */
+    private fun parseChatCompletion(bodyStr: String): String {
+        val parsed = try {
+            JsonParser.parseString(bodyStr).asJsonObject
+        } catch (e: Exception) {
+            throw IOException("Cloud AI returned a non-JSON response: " + bodyStr.take(300))
+        }
+
+        // Some providers return HTTP 200 with an error object in the body.
+        parsed.get("error")?.takeIf { it.isJsonObject }?.asJsonObject?.let { err ->
+            val msg = err.get("message")?.takeIf { it.isJsonPrimitive }?.asString
+                ?: err.toString().take(300)
+            throw IOException("Cloud AI provider error: $msg")
+        }
+
+        val choices = parsed.get("choices")?.takeIf { it.isJsonArray }?.asJsonArray
+        if (choices == null || choices.size() == 0) {
+            throw IOException("Cloud AI response had no choices: " + bodyStr.take(300))
+        }
+        val choice = choices.get(0).asJsonObject
+        val message = choice.get("message")?.takeIf { it.isJsonObject }?.asJsonObject
+            ?: throw IOException("Cloud AI response had no message: " + bodyStr.take(300))
+
+        // Models that decline to answer report it here rather than in content.
+        message.get("refusal")?.takeIf { it.isJsonPrimitive }?.asString
+            ?.takeIf { it.isNotBlank() }
+            ?.let { throw IOException("Cloud AI refused to answer: $it") }
+
+        val text = extractContentText(message.get("content")).trim()
+        if (text.isEmpty()) {
+            val finishReason = choice.get("finish_reason")
+                ?.takeIf { it.isJsonPrimitive }?.asString ?: "unknown"
+            throw IOException(
+                "Cloud AI returned an empty reply (finish_reason: $finishReason). " +
+                    "Check the model name in Settings."
+            )
+        }
+        return text
+    }
+
+    /**
+     * `content` may be a string (OpenAI), an array of parts (some proxies and
+     * self-hosted stacks; each part is either a string or a `{type, text}`
+     * object), or JSON null (tool calls / refusals).
+     */
+    private fun extractContentText(content: JsonElement?): String = when {
+        content == null || content.isJsonNull -> ""
+        content.isJsonPrimitive -> content.asString
+        content.isJsonArray -> content.asJsonArray.joinToString("") { part ->
+            when {
+                part.isJsonPrimitive -> part.asString
+                part.isJsonObject -> part.asJsonObject.get("text")
+                    ?.takeIf { it.isJsonPrimitive }?.asString ?: ""
+                else -> ""
+            }
+        }
+        else -> ""
     }
 
     override fun close() {

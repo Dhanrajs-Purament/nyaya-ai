@@ -180,6 +180,39 @@ class LegalKnowledgeBaseTest {
     }
 
     /**
+     * The app promises answers in Hindi — LawyerSystemPrompt instructs the
+     * model to reply in the user's language, and the release notes invite
+     * questions in Hindi. Before the query bridge, a Devanagari question
+     * tokenised to nothing ([a-z0-9] only), retrieval returned an empty list,
+     * and the model answered without grounding — the exact hallucination path
+     * retrieval exists to close. These two tests pin the bridge.
+     */
+    @Test
+    fun hindiDevanagariQuestion_reachesFirGrounding() {
+        val found = kb.retrieve("पुलिस मेरी एफआईआर दर्ज नहीं कर रही है")
+        assertTrue("Devanagari FIR question retrieved nothing", found.isNotEmpty())
+        val haystack = found.joinToString(" ") { it.source + " " + it.heading + " " + it.text }
+        assertTrue(
+            "expected FIR/police grounding, got sources=" + found.map { it.source },
+            haystack.contains("FIR", ignoreCase = true) ||
+                haystack.contains("First Information Report", ignoreCase = true) ||
+                haystack.contains("police", ignoreCase = true)
+        )
+    }
+
+    @Test
+    fun hinglishQuestion_reachesFamilyLawGrounding() {
+        val found = kb.retrieve("pati dahej ke liye marpit karta hai, talaq kaise milega")
+        assertTrue("Hinglish family-law question retrieved nothing", found.isNotEmpty())
+        val haystack = found.joinToString(" ") { it.source + " " + it.heading }
+        assertTrue(
+            "expected dowry/marriage/domestic-violence grounding, got sources=" + found.map { it.source },
+            Regex("dowry|marriage|domestic violence|nyaya sanhita", RegexOption.IGNORE_CASE)
+                .containsMatchIn(haystack)
+        )
+    }
+
+    /**
      * Reproduces exactly what NyayaViewModel.send() assembles before calling the
      * model, proving the offline grounded prompt is complete without any network.
      */
