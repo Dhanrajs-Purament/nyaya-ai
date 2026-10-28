@@ -1,0 +1,30 @@
+LANDMARK SUPREME COURT OF INDIA JUDGMENTS & DOCTRINAL PRECEDENTS
+
+Case 1: Justice K.S. Puttaswamy (Retd.) and Anr. v. Union of India and Ors. (2017) 10 SCC 1
+Bench: 9-Judge Constitutional Bench (Unanimous decision)
+Ratio Decidendi:
+The Supreme Court unanimously held that the Right to Privacy is a fundamental right protected under Part III of the Constitution. It is intrinsic to the right to life and personal liberty under Article 21 and forms part of the foundational freedoms guaranteed by Part III.
+Four-Fold Proportionality Test:
+Any state interference with privacy must survive the four-fold standard:
+1. Legality: Existence of an explicit codified law authorizing the action.
+2. Legitimate State Aim: The law must serve a legitimate state goal (e.g., national security, prevention of crime, equitable welfare distribution).
+3. Rational Nexus (Suitability): A rational connection between the objective and the means adopted.
+4. Necessity (Least Restrictive Measure): The infringement must be minimal, with no less intrusive alternative available.
+5. Procedural Safeguards: Institutional checks to prevent abuse of power.
+
+Case 2: Maneka Gandhi v. Union of India (1978) 1 SCC 248
+Bench: 7-Judge Constitutional Bench
+Ratio Decidendi:
+Overruled the narrow literalist interpretation of A.K. Gopalan (1950). The Court established the doctrine of the "Golden Triangle", holding that Articles 14, 19, and 21 are not mutually exclusive water-tight compartments, but interconnected.
+Any "procedure established by law" depriving personal liberty under Article 21 must satisfy the tests of Article 14 (non-arbitrariness, fairness) and Article 19 (reasonableness).
+The procedure cannot be arbitrary, fanciful, or oppressive; it must be "just, fair, and reasonable". This decision introduced substantive due process into Indian constitutional jurisprudence.
+
+Case 3: Arnesh Kumar v. State of Bihar (2014) 8 SCC 273
+Ratio Decidendi:
+Addressed the rampant abuse of arrest provisions in matrimonial disputes under Section 498-A IPC.
+The Supreme Court issued mandatory directions:
+1. Police officers must not automatically arrest an accused when an offense is punishable with imprisonment for a term which may be less than seven years or extend to seven years.
+2. The conditions stipulated under Section 41 CrPC (now Section 35 BNSS) must be satisfied before an arrest is made.
+3. A police officer must record in writing the reasons for arrest or non-arrest.
+4. Notice of appearance under Section 41-A CrPC (now Section 35(3) BNSS) must be served within two weeks of the institution of the case.
+5. Magistrates authorizing detention without complying with these directions are liable for departmental action by the High Court.

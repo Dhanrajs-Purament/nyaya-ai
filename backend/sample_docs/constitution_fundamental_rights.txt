@@ -1,0 +1,27 @@
+THE CONSTITUTION OF INDIA - FUNDAMENTAL RIGHTS & DOCTRINES
+
+Article 14: Equality before law
+The State shall not deny to any person equality before the law or the equal protection of the laws within the territory of India. This article embodies the general principle of equality and non-arbitrariness in state action (E.P. Royappa v. State of Tamil Nadu).
+
+Article 19: Protection of certain rights regarding freedom of speech, etc.
+(1) All citizens shall have the right:
+(a) to freedom of speech and expression;
+(b) to assemble peaceably and without arms;
+(c) to form associations or unions or co-operative societies;
+(d) to move freely throughout the territory of India;
+(e) to reside and settle in any part of the territory of India; and
+(g) to practise any profession, or to carry on any occupation, trade or business.
+(2) Reasonable restrictions under Article 19(2) may be imposed by law in the interests of sovereignty and integrity of India, security of the State, friendly relations with foreign States, public order, decency or morality, or in relation to contempt of court, defamation or incitement to an offence.
+
+Article 21: Protection of life and personal liberty
+No person shall be deprived of his life or personal liberty except according to procedure established by law.
+Judicial interpretation: The Supreme Court has expansively held that the word "life" does not signify mere animal existence, but signifies life with human dignity, right to clean environment, right to livelihood, right to speedy trial, and right to privacy (Maneka Gandhi, Francis Coralie, Puttaswamy).
+
+Article 32: Remedies for enforcement of rights conferred by Part III
+(1) The right to move the Supreme Court by appropriate proceedings for the enforcement of the rights conferred by this Part is guaranteed.
+(2) The Supreme Court shall have power to issue directions or orders or writs, including writs in the nature of habeas corpus, mandamus, prohibition, quo warranto and certiorari, whichever may be appropriate.
+Article 226 empowers the High Courts to issue similar writs not only for fundamental rights but also for any other legal right.
+
+Doctrine of Basic Structure:
+Laid down in Kesavananda Bharati v. State of Kerala (1973) 4 SCC 225 by a 13-judge constitutional bench.
+Held: Parliament's amending power under Article 368 is broad, but it is not unlimited and does not extend to altering or destroying the "basic structure" or essential framework of the Constitution. Core basic structure features include: supremacy of the Constitution, republican and democratic form of government, secular character, separation of powers, rule of law, and judicial review.

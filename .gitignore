@@ -67,3 +67,15 @@ tools/arti-build/target/
 # Release signing credentials (never commit)
 keystore.properties
 docs/ui-inspiration/*.png
+
+# Node / Web / Multi-LLM RAG ignores
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+chroma_storage/
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+backend/data/analytics_history.json
+
